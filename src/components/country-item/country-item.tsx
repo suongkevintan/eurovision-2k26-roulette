@@ -19,11 +19,7 @@ export function CountryItem({ code, name, state = "default" }: CountryItemProps)
     .join(" ");
 
   return (
-    <article
-      className={classNames}
-      aria-selected={state === "selected"}
-      aria-disabled={state === "used"}
-    >
+    <div className={classNames} data-state={state}>
       <Flag code={code} countryName={name} size="md" />
       <div className={styles["country-item__name"]}>
         <span className={styles["country-item__name-text"]}>{name}</span>
@@ -33,6 +29,6 @@ export function CountryItem({ code, name, state = "default" }: CountryItemProps)
           </span>
         ) : null}
       </div>
-    </article>
+    </div>
   );
 }

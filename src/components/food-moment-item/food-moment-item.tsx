@@ -19,7 +19,7 @@ export function FoodMomentItem({ label, icon, state = "default" }: FoodMomentIte
     .join(" ");
 
   return (
-    <article className={classNames} aria-selected={state === "selected"}>
+    <div className={classNames} data-state={state}>
       <span className={styles["food-moment-item__icon"]} aria-hidden="true">
         {icon}
       </span>
@@ -31,6 +31,6 @@ export function FoodMomentItem({ label, icon, state = "default" }: FoodMomentIte
           </span>
         ) : null}
       </span>
-    </article>
+    </div>
   );
 }
