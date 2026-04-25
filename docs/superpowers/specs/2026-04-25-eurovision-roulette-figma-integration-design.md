@@ -476,6 +476,7 @@ L'intégration est considérée terminée quand :
 6. Les 35 drapeaux Eurovision rendus correctement depuis `lipis/flag-icons`.
 7. `npm run build` et `npm run typecheck` passent sans warning bloquant.
 8. La logique de tirage (pondération, code unique, persistance Supabase/localStorage) est inchangée et fonctionne comme avant.
+9. **WCAG 2.2 AA respecté** sur la totalité de l'interface : contrastes texte ≥ 4.5:1, large text et UI non-textuel ≥ 3:1, focus visible avec indicateur ≥ 3:1, support `prefers-reduced-motion`, annonces aria-live pendant le spin (cf. §11).
 
 ---
 
@@ -491,7 +492,137 @@ L'intégration est considérée terminée quand :
 
 ---
 
-## 11. Annexes
+## 11. Conformité WCAG 2.2 AA
+
+L'app cible la conformité **WCAG 2.2 AA** comme baseline (et AAA dès que c'est gratuit). Les points spécifiques au design integration :
+
+### 11.1 Audit contraste de la palette proposée (SC 1.4.3, 1.4.11)
+
+| Pair foreground / background | Ratio | Usage | Norme |
+|---|---|---|---|
+| `#fefefe` sur `#050b30` (bg primary) | ~17.8:1 | Titre Hero, body, header logo | ✅ AAA |
+| `#fefefe` sur `#0a23be` (eurovision-blue) | ~10.2:1 | Country/Item default state, FoodMoment default state | ✅ AAA |
+| `#181818` sur `#fefefe` | ~16.0:1 | Texte panels Logs, country/moment selected | ✅ AAA |
+| `#626262` sur `#fefefe` (placeholder, body italic help) | ~5.8:1 | Placeholder inputs, "Ce code permet…" | ✅ AA texte normal (échoue AAA — acceptable) |
+| `#626262` sur `#eaeaea` (placeholder code disabled) | ~4.9:1 | Code "--- --- ---" dans input retrieve | ✅ AA texte normal |
+| `#00c7f1` sur `#050b30` | ~10:1 | Pill incentive cyan, focus ring sur fond sombre | ✅ AAA |
+| `#0a23be` sur `#fefefe` | ~10.2:1 | Focus ring sur surfaces claires, badge check selected | ✅ AAA |
+| `#8b8b8b` (border input) sur `#fefefe` | ~3.25:1 | Bordure 1px input | ✅ AA non-texte |
+| `#ebebeb` (bevel CTA) sur `#fefefe` | ~1.2:1 | **Décoratif uniquement** — n'est pas le seul indicateur d'état | ⚠️ Décoratif — voir §11.3 |
+
+**Décision** : la palette passe AA partout sauf l'effet bevel décoratif des CTAs. Comme ce bevel est purement esthétique et que l'identité du bouton est portée par l'icône + le label + la zone cliquable + le focus ring, c'est acceptable. On documente en commentaire CSS que le bevel border ne porte aucune info essentielle.
+
+### 11.2 Focus visible (SC 2.4.7) et focus appearance (SC 2.4.13, nouveau en 2.2)
+
+Tous les éléments interactifs (buttons, links, inputs, country items focusables au clavier) reçoivent un anneau de focus :
+
+```css
+:root {
+  --color-focus-ring-on-light: #0a23be;   /* eurovision-blue, 10.2:1 sur blanc */
+  --color-focus-ring-on-dark: #00c7f1;    /* eurovision-cyan, 10:1 sur navy */
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+.cta-button:focus-visible,
+.country-item:focus-visible,
+.food-moment-item:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring-on-light);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* sur surfaces sombres, on bascule la couleur de l'anneau */
+.section-hero .cta-button:focus-visible {
+  outline-color: var(--color-focus-ring-on-dark);
+}
+```
+
+L'anneau est de 3px (au-dessus du minimum 2 CSS px de SC 2.4.13) avec un offset 2px qui crée un halo blanc/sombre garantissant le 3:1 contre les couleurs adjacentes même sur des fonds bruyants (gradient hero, noise).
+
+### 11.3 Indicateurs d'état non basés sur la couleur seule (SC 1.4.1)
+
+L'état "selected" d'un Country/Item ou d'un FoodMoment/Item ne repose **pas uniquement** sur le changement de couleur (blanc avec check vs bleu sans check). On ajoute :
+- Une icône `<CheckIcon>` (visuelle + `aria-hidden="true"`)
+- Un attribut `aria-selected="true"` sur l'élément
+- Un `aria-label` ou texte SR-only "Pays sélectionné: France" pour le résultat
+
+L'état "spinning" / "highlight" pendant la roulette ne repose pas uniquement sur la couleur non plus : le scale 1.04 + le ring eurovision-cyan + l'annonce live (cf. §11.5) donnent un signal redondant.
+
+### 11.4 Mouvement et animations (SC 2.3.3 enhanced, 2.2.2)
+
+L'animation de roulette de 5s est longue. On respecte `prefers-reduced-motion` :
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .country-item--spinning,
+  .food-moment-item--spinning {
+    animation: none;
+    transform: none;
+  }
+}
+```
+
+En mode reduced-motion, on remplace l'animation visible par :
+- Un texte SR-only "Tirage en cours..." (`aria-live="polite"`)
+- Un délai de 800ms (au lieu de 5s) pour donner du suspense sans surcharge visuelle
+- Le pays + moment apparaissent directement en état `selected`
+
+### 11.5 Annonces aux lecteurs d'écran (SC 4.1.3)
+
+Une région `aria-live="polite"` invisible visuellement est ajoutée en bas du document :
+
+```html
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  {liveMessage}
+</div>
+```
+
+Messages diffusés :
+- Au clic sur "Lancer la roulette" : "Tirage en cours, sélection aléatoire pendant 5 secondes."
+- À la fin du spin : "Résultat : France, plat principal. Voir les recettes ci-dessous."
+- Au scrollTo : pas d'annonce supplémentaire (le focus management peut prendre le relais).
+
+### 11.6 Navigation clavier (SC 2.1.1, 2.4.3)
+
+Ordre du tab :
+1. Logo (lien vers home, optionnel)
+2. Pill "X participants en lice" (non-interactif → tabindex="-1" ou pas de tabindex)
+3. Bouton settings header
+4. CTA "Lancer la roulette" hero
+5. Input prénom (Panel Inscription)
+6. CTA "Lancer la roulette" panel inscription
+7. Input code (Panel Retrieve)
+8. CTA "Retrouver ses informations"
+9. (En état revealed) CTAs du Panel Result
+10. (En état revealed) Liens "Voir la recette" du Panel Recipes
+
+Les Country/Items et FoodMoment/Items ne sont **pas** focusables au clavier par défaut (ils ne sont pas interactifs en idle/spinning, juste visuels). En mode admin uniquement, les Country/Items peuvent devenir focusables si on ajoute une feature "reroll par item".
+
+### 11.7 Tailles cibles tactiles (SC 2.5.8, nouveau en 2.2)
+
+WCAG 2.2 introduit SC 2.5.8 (Target Size Minimum, AA) : zones cliquables ≥ 24×24 CSS px.
+
+Audit :
+- CTA hero : 299×72 ✅
+- CTA panels : ~209×52 et ~284×52 ✅
+- Bouton settings header : 48×48 ✅
+- Input height : 40px ⚠️ — la zone cliquable du label/wrapper doit englober au moins 44×44 pour confort mobile (recommandation Apple), ou 24×24 strict WCAG → OK strict, à étendre à 44 si possible
+- Country/Item : 464×56 ✅ (si rendu interactif)
+- FoodMoment/Item : 328×48 ✅
+- Recipe item CTA : 184×44 ✅
+
+Tout passe SC 2.5.8 strict.
+
+### 11.8 Outillage de vérification
+
+Pendant l'implémentation, on intègre :
+- `axe-core` ou `@axe-core/react` en mode dev pour audit auto en console
+- `eslint-plugin-jsx-a11y` (déjà recommandé par Next.js, vérifier qu'il est actif)
+- Test manuel au clavier (Tab, Shift+Tab, Enter, Escape) à chaque palier
+- Test screen-reader (VoiceOver macOS) au moins une fois en fin de palier 6 (animation)
+- Lighthouse CI sur le build de production avec score Accessibility ≥ 95
+
+## 12. Annexes
 
 ### 11.1 Mapping calques Figma → composants React
 
