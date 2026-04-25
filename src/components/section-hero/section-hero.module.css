@@ -48,8 +48,10 @@
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-h1);
   color: var(--color-text-on-dark);
-  width: 100%;
+  align-self: stretch;
+  min-width: 0;
   max-width: 49.75rem; /* 796px */
+  margin-inline: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -60,8 +62,10 @@
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-body);
   color: var(--color-text-on-dark);
-  width: 100%;
+  align-self: stretch;
+  min-width: 0;
   max-width: 39.625rem; /* 634px */
+  margin-inline: auto;
 }
 
 @media (max-width: 80rem) {
