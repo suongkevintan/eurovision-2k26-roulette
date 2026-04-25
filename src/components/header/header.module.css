@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-10);
+  padding-inline: var(--grid-margin);
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 100vw;
+}
+
+.header__logo {
+  flex-shrink: 0;
+}
+
+.header__incentive {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background-color: rgba(0, 199, 241, 0.15);
+  border: 1px solid var(--color-eurovision-cyan);
+  border-radius: var(--radius-full);
+  color: var(--color-eurovision-cyan);
+}
+
+.header__incentive-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-cta);
+}
+
+.header__incentive-count {
+  font-weight: var(--font-weight-bold);
+}
+
+@media (max-width: 80rem) {
+  .header {
+    padding-inline: var(--space-6);
+  }
+}
