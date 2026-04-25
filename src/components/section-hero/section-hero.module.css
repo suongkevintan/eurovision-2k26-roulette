@@ -16,6 +16,18 @@
   z-index: 0;
 }
 
+.section-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--noise-overlay);
+  background-repeat: repeat;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  z-index: 0;
+}
+
 .section-hero__content {
   position: relative;
   flex: 1;
