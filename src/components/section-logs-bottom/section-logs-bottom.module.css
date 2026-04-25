@@ -1,0 +1,20 @@
+.section-logs-bottom {
+  padding-block: var(--space-10);
+  padding-inline: var(--grid-margin);
+}
+
+.section-logs-bottom__inner {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+@media (max-width: 80rem) {
+  .section-logs-bottom {
+    padding-inline: var(--space-6);
+  }
+
+  .section-logs-bottom__inner {
+    flex-direction: column;
+  }
+}
