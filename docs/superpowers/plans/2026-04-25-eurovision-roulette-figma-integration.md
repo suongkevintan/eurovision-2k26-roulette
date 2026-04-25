@@ -372,7 +372,7 @@ Locate the existing `export const dinnerSlots` (lines 3-8) and replace with:
 ```ts
 export const dinnerSlots: Record<DinnerSlot, { label: string; short: string; tone: string }> = {
   apero: { label: "Apéro", short: "AP", tone: "#00b4d8" },
-  entree: { label: "Entrée", short: "EN", tone: "#8ac926" },
+  entree: { label: "Entrée", short: "EN", tone: "#8ac926" }, // renamed from "Petite entrée" to align with Figma
   plat: { label: "Plat principal", short: "PL", tone: "#ff4d6d" },
   dessert: { label: "Dessert", short: "DE", tone: "#ffbe0b" },
   snacks: { label: "Snacks", short: "SN", tone: "#9d4edd" }
