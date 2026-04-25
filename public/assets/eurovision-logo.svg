@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+  <defs>
+    <linearGradient id="eurovision-heart" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e0237a" />
+      <stop offset="0.5" stop-color="#ff6f00" />
+      <stop offset="1" stop-color="#0a23be" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M28 50 C8 36, 4 22, 12 14 C18 8, 26 10, 28 18 C30 10, 38 8, 44 14 C52 22, 48 36, 28 50 Z"
+    fill="url(#eurovision-heart)"
+  />
+</svg>
