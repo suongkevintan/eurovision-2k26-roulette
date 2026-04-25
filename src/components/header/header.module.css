@@ -40,3 +40,9 @@
     padding-inline: var(--space-6);
   }
 }
+
+@media (max-width: 30rem) {
+  .header__incentive {
+    display: none;
+  }
+}

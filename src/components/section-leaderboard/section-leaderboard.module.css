@@ -3,6 +3,12 @@
   padding-inline: var(--grid-margin);
 }
 
+@media (max-width: 48rem) {
+  .section-leaderboard {
+    padding-block: var(--space-6);
+  }
+}
+
 .section-leaderboard__inner {
   display: flex;
   align-items: flex-start;
@@ -57,5 +63,11 @@
 @media (max-width: 48rem) {
   .section-leaderboard__countries {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 30rem) {
+  .section-leaderboard__countries {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

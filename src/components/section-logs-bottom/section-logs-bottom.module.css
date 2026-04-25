@@ -3,6 +3,12 @@
   padding-inline: var(--grid-margin);
 }
 
+@media (max-width: 48rem) {
+  .section-logs-bottom {
+    padding-block: var(--space-6);
+  }
+}
+
 .section-logs-bottom__inner {
   display: flex;
   align-items: stretch;

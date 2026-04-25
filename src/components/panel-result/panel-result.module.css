@@ -105,3 +105,17 @@
   gap: var(--space-3);
   flex-wrap: wrap;
 }
+
+@media (max-width: 30rem) {
+  .panel-result__command {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .panel-result__flag {
+    position: static;
+    align-self: flex-end;
+  }
+}

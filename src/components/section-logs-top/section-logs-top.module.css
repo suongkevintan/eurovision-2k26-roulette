@@ -15,6 +15,7 @@
 @media (max-width: 80rem) {
   .section-logs-top {
     padding-inline: var(--space-6);
+    padding-block: var(--space-6);
   }
 
   .section-logs-top__inner {

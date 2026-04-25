@@ -81,3 +81,14 @@
     padding-inline: var(--space-6);
   }
 }
+
+@media (max-width: 30rem) {
+  .section-hero__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .section-hero__content {
+    padding-inline: var(--space-4);
+    gap: var(--space-5);
+  }
+}
