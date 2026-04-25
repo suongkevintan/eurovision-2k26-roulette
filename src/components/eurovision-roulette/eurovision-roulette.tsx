@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AdminDrawer } from "@/components/admin-drawer/admin-drawer";
 import { PanelInscription } from "@/components/panel-inscription/panel-inscription";
 import { PanelRecipes } from "@/components/panel-recipes/panel-recipes";
 import { PanelResult } from "@/components/panel-result/panel-result";
@@ -10,14 +11,13 @@ import { SectionLeaderboard } from "@/components/section-leaderboard/section-lea
 import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs-bottom";
 import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
 import { countries, dinnerSlots } from "@/lib/data";
-import { createGuest } from "@/lib/roulette";
+import { createGuest, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { hasSupabase, loadState, persistState } from "@/lib/storage";
-import type { DinnerSlot, RouletteState } from "@/lib/types";
+import { loadState, persistState } from "@/lib/storage";
+import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 import styles from "./eurovision-roulette.module.css";
 
 type Phase = "idle" | "spinning" | "revealed";
-const ADMIN_PIN = "1974";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 function scrollIntoLeaderboard() {
@@ -32,7 +32,8 @@ function scrollIntoLeaderboard() {
 export function EurovisionRoulette() {
   const [state, setState] = useState<RouletteState>({ revealDraws: false, guests: [] });
   const [activeCode, setActiveCode] = useState<string | null>(null);
-  const [adminPin, setAdminPin] = useState("");
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [spinningCountryCode, setSpinningCountryCode] = useState<string | null>(null);
   const [spinningSlot, setSpinningSlot] = useState<DinnerSlot | null>(null);
@@ -51,7 +52,7 @@ export function EurovisionRoulette() {
     persistState(state).catch(() => undefined);
   }, [state]);
 
-  const isAdmin = adminPin === ADMIN_PIN;
+  const isAdmin = adminUnlocked;
 
   const activeGuest = useMemo(
     () => state.guests.find((g) => g.code.toUpperCase() === activeCode?.toUpperCase()) ?? null,
@@ -138,12 +139,34 @@ export function EurovisionRoulette() {
   }
 
   function handleOpenAdmin() {
-    const input = window.prompt("PIN admin");
-    if (input) setAdminPin(input);
+    setAdminOpen(true);
   }
 
-  // Suppress unused var warning for hasSupabase (used in Batch 8 status display)
-  void hasSupabase;
+  function handleReroll(guest: Guest) {
+    setState((prev) => {
+      const others = prev.guests.filter((g) => g.id !== guest.id);
+      const next: Guest = {
+        ...guest,
+        dinnerSlot: pickDinnerSlot(others, prev.guests.length),
+        countryCode: pickCountry(others)
+      };
+      return {
+        ...prev,
+        guests: prev.guests.map((g) => (g.id === guest.id ? next : g))
+      };
+    });
+  }
+
+  function handleRemove(guest: Guest) {
+    if (!window.confirm(`Supprimer ${guest.name} ?`)) return;
+    setState((prev) => ({ ...prev, guests: prev.guests.filter((g) => g.id !== guest.id) }));
+    if (activeCode === guest.code) setActiveCode(null);
+  }
+
+  function handleCopyCodes() {
+    const text = state.guests.map((g) => `${g.name}: ${g.code}`).join("\n");
+    navigator.clipboard.writeText(text);
+  }
 
   return (
     <main className={styles["eurovision-roulette"]}>
@@ -193,6 +216,17 @@ export function EurovisionRoulette() {
       <div className={styles["eurovision-roulette__live"]} role="status" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
+      <AdminDrawer
+        open={adminOpen}
+        guests={state.guests}
+        revealDraws={state.revealDraws}
+        onClose={() => setAdminOpen(false)}
+        onUnlock={() => setAdminUnlocked(true)}
+        onToggleReveal={handleToggleReveal}
+        onCopyCodes={handleCopyCodes}
+        onReroll={handleReroll}
+        onRemove={handleRemove}
+      />
     </main>
   );
 }
