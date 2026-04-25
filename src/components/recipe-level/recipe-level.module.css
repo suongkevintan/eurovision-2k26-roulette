@@ -1,0 +1,37 @@
+.recipe-level {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  color: var(--color-text-on-light);
+}
+
+.recipe-level__stars {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.recipe-level__star {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-bg-input-disabled);
+}
+
+.recipe-level__star--filled {
+  background-color: var(--color-eurovision-blue);
+}
+
+.recipe-level__label {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-cta);
+}
+
+.recipe-level__details {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
