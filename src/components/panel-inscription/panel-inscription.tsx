@@ -36,6 +36,7 @@ export function PanelInscription({ code, disabled, onSubmit }: PanelInscriptionP
           <input
             id="inscription-name"
             type="text"
+            autoComplete="given-name"
             placeholder="John Doe"
             className={styles["panel-inscription__input"]}
             value={name}

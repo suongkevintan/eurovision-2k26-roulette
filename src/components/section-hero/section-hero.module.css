@@ -64,4 +64,8 @@
   .section-hero__title {
     font-size: var(--font-size-2xl);
   }
+
+  .section-hero__content {
+    padding-inline: var(--space-6);
+  }
 }

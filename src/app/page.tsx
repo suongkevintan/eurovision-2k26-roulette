@@ -5,14 +5,15 @@ import { PanelInscription } from "@/components/panel-inscription/panel-inscripti
 import { PanelRetrieve } from "@/components/panel-retrieve/panel-retrieve";
 import { SectionHero } from "@/components/section-hero/section-hero";
 import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
+import { makeCode } from "@/lib/roulette";
 
 export default function Home() {
   const [code, setCode] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState(0);
 
   function handleRegister(name: string) {
-    const fakeCode = `${name.slice(0, 3).toUpperCase().padEnd(3, "X")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    setCode(fakeCode);
+    // Temporary: full orchestration with persistence comes in Batch 7
+    setCode(makeCode(name));
     setParticipantCount((c) => c + 1);
   }
 
