@@ -54,7 +54,7 @@
 .cta-button--primary {
   border-radius: var(--radius-xl);
   height: 4.5rem; /* 72px */
-  padding: 0;
+  padding: 4px; /* creates the 4px bevel ring around the inner */
 }
 
 .cta-button--primary .cta-button__bevel {
@@ -62,8 +62,7 @@
 }
 
 .cta-button--primary .cta-button__inner {
-  inset: 4px;
-  position: absolute;
+  height: 100%;
   border-radius: var(--radius-lg);
   padding: 0 var(--space-4);
   font-size: var(--font-size-base);
