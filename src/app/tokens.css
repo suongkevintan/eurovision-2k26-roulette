@@ -1,0 +1,110 @@
+:root {
+  /* === Surfaces === */
+  --color-bg-primary: #050b30;
+  --color-bg-elevated: #0a1240;
+  --color-bg-on-light: #fefefe;
+  --color-bg-input-light: #fefefe;
+  --color-bg-input-disabled: #eaeaea;
+  --color-bg-code-reveal: #011753;
+
+  /* === Eurovision palette === */
+  --color-eurovision-blue: #0a23be;
+  --color-eurovision-cyan: #00c7f1;
+  --color-eurovision-pink: #e0237a;
+
+  /* === Text === */
+  --color-text-on-dark: #fefefe;
+  --color-text-on-light: #181818;
+  --color-text-muted: #626262;
+
+  /* === Borders === */
+  --color-border-input: #8b8b8b;
+  --color-border-cta: #ebebeb;
+  --color-border-panel: rgba(255, 255, 255, 0.5);
+
+  /* === Focus rings (WCAG 2.4.7 + 2.4.13) === */
+  --color-focus-ring-on-light: var(--color-eurovision-blue);
+  --color-focus-ring-on-dark: var(--color-eurovision-cyan);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  /* === Effects === */
+  --shadow-cta-soft: 0 0 8px rgba(0, 0, 0, 0.1);
+  --shadow-cta-mini: 0 0 5px rgba(0, 0, 0, 0.1);
+  --gradient-hero-bg: radial-gradient(
+    ellipse at 100% 100%,
+    rgba(224, 35, 122, 0.45) 0%,
+    rgba(10, 35, 190, 0.35) 35%,
+    transparent 70%
+  );
+
+  /* === Typography === */
+  --font-family-sans: var(--font-inter), system-ui, sans-serif;
+  --font-family-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 1rem;
+  --font-size-md: 1.125rem;
+  --font-size-base: 1.25rem;
+  --font-size-lg: 1.5625rem;
+  --font-size-xl: 2rem;
+  --font-size-2xl: 2.5rem;
+  --font-size-3xl: 3.1875rem;
+  --font-size-4xl: 4rem;
+  --font-size-5xl: 5rem;
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-cta: 1.4;
+
+  --letter-spacing-h1: -0.03em;
+  --letter-spacing-body: -0.02em;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* === Spacing (4px base) === */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-18: 4.5rem;
+  --space-20: 5rem;
+
+  /* === Grid === */
+  --grid-columns: 24;
+  --grid-gutter: 0.5rem;
+  --grid-margin: 5rem;
+  --grid-content-max: 110rem;
+
+  /* === Radii === */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-pill: 3rem;
+  --radius-full: 99rem;
+
+  /* === Z-index === */
+  --z-header: 10;
+  --z-overlay: 50;
+  --z-drawer: 60;
+
+  /* === Motion === */
+  --duration-spin-tile: 60ms;
+  --duration-spin-total: 5000ms;
+  --duration-scroll-to-result: 800ms;
+  --duration-press: 120ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
