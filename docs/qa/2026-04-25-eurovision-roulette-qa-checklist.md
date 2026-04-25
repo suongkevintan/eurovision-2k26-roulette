@@ -334,9 +334,16 @@
 
 - ⚠️ **Logo Eurovision** : SVG placeholder coeur générique. À remplacer par export Figma propre.
 - ⚠️ **YouTube IDs Danemark / Lettonie / Luxembourg / Saint-Marin** : la chaîne officielle Eurovision n'a publié que la "National Final Performance" (pas de vrai music video). L'embed marche mais c'est un live de national final, pas un MV studio.
+- ⚠️ **Hero titre mobile (≤ 480px)** : tentative de fix appliquée (`align-self: stretch; min-width: 0; max-width; margin-inline: auto`) mais headless Chrome a continué à montrer le titre tronqué dans mes screenshots. Ce *peut* être un quirk de headless Chrome (font metrics qui diffèrent du vrai navigateur). À **vérifier en QA mobile réel** : si le titre wrap proprement sur un vrai iPhone SE / Android compact, le fix est OK ; sinon, basculer `.section-hero__content` de `display: flex` à `display: block` au breakpoint 30rem pour contourner le comportement de flex+align-items.
 - 📝 **Code retrieve "non trouvé"** : actuellement silencieux (pas de message d'erreur affiché). À ajouter si confusion en QA.
 - 📝 **Multi-onglets Supabase** : pas de sync temps réel (channel realtime) — il faut reload manuel pour voir les nouveaux invités.
 - 📝 **Pas de tests automatisés** : tout est testé à la main avec ce carnet.
+
+## QA prod — bugs trouvés en review (2026-04-25)
+
+> Capturé après revue de la build prod par Suong Kevin. À fixer avant le 16 mai 2026.
+
+- ☐ _(à compléter — décris ici ce que tu as vu en prod)_
 
 ---
 
