@@ -1,0 +1,10 @@
+.eurovision-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eurovision-logo__img {
+  display: block;
+  width: 100%;
+}

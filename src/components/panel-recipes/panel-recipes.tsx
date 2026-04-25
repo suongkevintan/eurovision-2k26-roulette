@@ -2,7 +2,6 @@ import { ChefHat } from "lucide-react";
 import { RecipeItem } from "@/components/recipe-item/recipe-item";
 import { RecipeLevel } from "@/components/recipe-level/recipe-level";
 import type { Country, DinnerSlot, Difficulty } from "@/lib/types";
-import styles from "./panel-recipes.module.css";
 
 type PanelRecipesProps = {
   country: Country | null;
@@ -14,12 +13,12 @@ const difficulties: Difficulty[] = ["Facile", "Moyen", "Challenge"];
 export function PanelRecipes({ country, slot }: PanelRecipesProps) {
   if (!country || !slot) {
     return (
-      <section className={styles["panel-recipes"]} aria-label="Recettes proposées">
-        <header className={styles["panel-recipes__header"]}>
+      <section className={"panel-recipes"} aria-label="Recettes proposées">
+        <header className={"panel-recipes__header"}>
           <ChefHat size={24} aria-hidden="true" />
-          <h2 className={styles["panel-recipes__title"]}>Recettes</h2>
+          <h2 className={"panel-recipes__title"}>Recettes</h2>
         </header>
-        <p className={styles["panel-recipes__placeholder"]}>
+        <p className={"panel-recipes__placeholder"}>
           Les recettes du pays tiré apparaîtront ici.
         </p>
       </section>
@@ -27,20 +26,23 @@ export function PanelRecipes({ country, slot }: PanelRecipesProps) {
   }
   const dishes = country.dishes[slot];
   return (
-    <section className={styles["panel-recipes"]} aria-label="Recettes proposées">
-      <header className={styles["panel-recipes__header"]}>
+    <section className={"panel-recipes"} aria-label="Recettes proposées">
+      <header className={"panel-recipes__header"}>
         <ChefHat size={24} aria-hidden="true" />
-        <h2 className={styles["panel-recipes__title"]}>Trois recettes pour {country.name}</h2>
+        <div className={"panel-recipes__header-text"}>
+          <h2 className={"panel-recipes__title"}>Inspiration de recettes traditionnelles</h2>
+          <p className={"panel-recipes__subtitle"}>Pour {country.name}</p>
+        </div>
       </header>
       {difficulties.map((difficulty) => {
         const filtered = dishes.filter((d) => d.difficulty === difficulty);
         if (!filtered.length) return null;
         return (
-          <section key={difficulty} className={styles["panel-recipes__group"]}>
+          <section key={difficulty} className={"panel-recipes__group"}>
             <RecipeLevel difficulty={difficulty} count={filtered.length} />
-            <div className={styles["panel-recipes__items"]}>
+            <div className={"panel-recipes__items"}>
               {filtered.map((dish, idx) => (
-                <RecipeItem key={dish.id} index={idx + 1} dish={dish} />
+                <RecipeItem key={dish.id} index={idx + 1} dish={dish} countryName={country.name} />
               ))}
             </div>
           </section>

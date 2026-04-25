@@ -1,4 +1,22 @@
 @import "./tokens.css";
+@import "../components/admin-drawer/admin-drawer.css";
+@import "../components/country-item/country-item.css";
+@import "../components/cta-button/cta-button.css";
+@import "../components/eurovision-logo/eurovision-logo.css";
+@import "../components/eurovision-roulette/eurovision-roulette.css";
+@import "../components/flag/flag.css";
+@import "../components/food-moment-item/food-moment-item.css";
+@import "../components/header/header.css";
+@import "../components/panel-inscription/panel-inscription.css";
+@import "../components/panel-recipes/panel-recipes.css";
+@import "../components/panel-result/panel-result.css";
+@import "../components/panel-retrieve/panel-retrieve.css";
+@import "../components/recipe-item/recipe-item.css";
+@import "../components/recipe-level/recipe-level.css";
+@import "../components/section-hero/section-hero.css";
+@import "../components/section-leaderboard/section-leaderboard.css";
+@import "../components/section-logs-bottom/section-logs-bottom.css";
+@import "../components/section-logs-top/section-logs-top.css";
 
 *,
 *::before,

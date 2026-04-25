@@ -1,10 +1,9 @@
 import { Croissant, IceCream, Pizza, Soup, UtensilsCrossed } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { CountryItem } from "@/components/country-item/country-item";
 import { FoodMomentItem } from "@/components/food-moment-item/food-moment-item";
 import { dinnerSlots } from "@/lib/data";
 import type { Country, DinnerSlot } from "@/lib/types";
-import styles from "./section-leaderboard.module.css";
 
 const slotIcons: Record<DinnerSlot, ReactNode> = {
   apero: <Croissant size={28} />,
@@ -23,6 +22,7 @@ type SectionLeaderboardProps = {
   usedCountryCodes: Set<string>;
   selectedSlot: DinnerSlot | null;
   spinningSlot: DinnerSlot | null;
+  gif?: ReactNode;
 };
 
 export function SectionLeaderboard({
@@ -31,31 +31,34 @@ export function SectionLeaderboard({
   spinningCountryCode,
   usedCountryCodes,
   selectedSlot,
-  spinningSlot
+  spinningSlot,
+  gif
 }: SectionLeaderboardProps) {
   return (
     <section
       id="section-leaderboard"
-      className={styles["section-leaderboard"]}
+      className={"section-leaderboard"}
       aria-label="Tableau des pays et moments du dîner"
     >
-      <div className={styles["section-leaderboard__inner"]}>
-        <div className={styles["section-leaderboard__countries"]}>
+      <div className={"section-leaderboard__inner"}>
+        <div className={"section-leaderboard__countries"}>
           {countries.map((country) => {
+            const isUsedByOther = usedCountryCodes.has(country.code) && country.code !== selectedCountryCode;
             const state = (() => {
               if (country.code === selectedCountryCode) return "selected" as const;
               if (country.code === spinningCountryCode) return "spinning" as const;
-              if (usedCountryCodes.has(country.code) && country.code !== selectedCountryCode) return "used" as const;
+              if (isUsedByOther) return "used" as const;
               return "default" as const;
             })();
             return (
-              <div key={country.code} className={styles["section-leaderboard__country-cell"]}>
+              <div key={country.code} className={"section-leaderboard__country-cell"}>
                 <CountryItem code={country.code} name={country.name} state={state} />
               </div>
             );
           })}
         </div>
-        <div className={styles["section-leaderboard__moments"]}>
+        <div className={"section-leaderboard__right"}>
+          <div className={"section-leaderboard__moments"}>
           {slotOrder.map((slot) => {
             const state = slot === selectedSlot
               ? "selected" as const
@@ -71,6 +74,8 @@ export function SectionLeaderboard({
               />
             );
           })}
+          </div>
+          {gif ? <div className={"section-leaderboard__gif"}>{gif}</div> : null}
         </div>
       </div>
     </section>

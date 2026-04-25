@@ -1,5 +1,4 @@
 import { flagPath } from "@/lib/flags";
-import styles from "./flag.module.css";
 
 type FlagProps = {
   code: string;
@@ -16,7 +15,7 @@ const dimensions = {
 
 export function Flag({ code, countryName, size = "md", className }: FlagProps) {
   const { width, height } = dimensions[size];
-  const classNames = [styles["flag"], className].filter(Boolean).join(" ");
+  const classNames = ["flag", className].filter(Boolean).join(" ");
   return (
     <span
       className={classNames}
@@ -31,7 +30,7 @@ export function Flag({ code, countryName, size = "md", className }: FlagProps) {
         alt=""
         width={width}
         height={height}
-        className={styles["flag__img"]}
+        className={"flag__img"}
         loading="lazy"
       />
     </span>

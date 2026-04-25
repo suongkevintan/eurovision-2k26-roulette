@@ -2,22 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AdminDrawer } from "@/components/admin-drawer/admin-drawer";
-import { PanelInscription } from "@/components/panel-inscription/panel-inscription";
 import { PanelRecipes } from "@/components/panel-recipes/panel-recipes";
 import { PanelResult } from "@/components/panel-result/panel-result";
-import { PanelRetrieve } from "@/components/panel-retrieve/panel-retrieve";
 import { SectionHero } from "@/components/section-hero/section-hero";
 import { SectionLeaderboard } from "@/components/section-leaderboard/section-leaderboard";
 import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs-bottom";
-import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
 import { loadState, persistState } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
-import styles from "./eurovision-roulette.module.css";
 
-type Phase = "idle" | "spinning" | "revealed";
+type Phase = "idle" | "code_shown" | "spinning" | "revealed";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 function scrollIntoLeaderboard() {
@@ -32,6 +28,7 @@ function scrollIntoLeaderboard() {
 export function EurovisionRoulette() {
   const [state, setState] = useState<RouletteState>({ revealDraws: false, guests: [] });
   const [activeCode, setActiveCode] = useState<string | null>(null);
+  const [pendingGuest, setPendingGuest] = useState<Guest | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -52,6 +49,20 @@ export function EurovisionRoulette() {
     persistState(state).catch(() => undefined);
   }, [state]);
 
+  useEffect(() => {
+    const locked = phase === "idle" || phase === "code_shown";
+    document.body.style.overflow = locked ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === "spinning") scrollIntoLeaderboard();
+    if (phase === "revealed") {
+      const el = document.getElementById("section-logs-bottom");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [phase]);
+
   const isAdmin = adminUnlocked;
 
   const activeGuest = useMemo(
@@ -69,7 +80,7 @@ export function EurovisionRoulette() {
     : null;
 
   const startSpin = useCallback(
-    (name: string) => {
+    (guest: Guest) => {
       setPhase("spinning");
       setLiveMessage("Tirage en cours, sélection aléatoire pendant 5 secondes.");
 
@@ -98,14 +109,11 @@ export function EurovisionRoulette() {
       const completeId = window.setTimeout(() => {
         setSpinningCountryCode(null);
         setSpinningSlot(null);
-        setState((prev) => {
-          const guest = createGuest(name, prev.guests);
-          setActiveCode(guest.code);
-          const country = countries.find((c) => c.code === guest.countryCode);
-          const slotLabel = dinnerSlots[guest.dinnerSlot].label;
-          setLiveMessage(`Résultat : ${country?.name ?? "?"}, ${slotLabel.toLowerCase()}.`);
-          return { ...prev, guests: [...prev.guests, guest] };
-        });
+        setState((prev) => ({ ...prev, guests: [...prev.guests, guest] }));
+        setActiveCode(guest.code);
+        const country = countries.find((c) => c.code === guest.countryCode);
+        const slotLabel = dinnerSlots[guest.dinnerSlot].label;
+        setLiveMessage(`Résultat : ${country?.name ?? "?"}, ${slotLabel.toLowerCase()}.`);
         setPhase("revealed");
         scrollIntoLeaderboard();
       }, totalMs);
@@ -116,7 +124,17 @@ export function EurovisionRoulette() {
 
   function handleRegister(name: string) {
     if (phase === "spinning") return;
-    startSpin(name);
+    const guest = createGuest(name, state.guests);
+    setPendingGuest(guest);
+    setActiveCode(guest.code);
+    setPhase("code_shown");
+  }
+
+  function handleLaunchSpin() {
+    if (!pendingGuest || phase !== "code_shown") return;
+    const guest = pendingGuest;
+    setPendingGuest(null);
+    startSpin(guest);
   }
 
   function handleRetrieve(code: string) {
@@ -124,17 +142,7 @@ export function EurovisionRoulette() {
     setPhase("revealed");
   }
 
-  function handleToggleShopping() {
-    if (!activeGuest) return;
-    setState((prev) => ({
-      ...prev,
-      guests: prev.guests.map((g) =>
-        g.id === activeGuest.id ? { ...g, shoppingDone: !g.shoppingDone } : g
-      )
-    }));
-  }
-
-  function handleToggleReveal() {
+function handleToggleReveal() {
     setState((prev) => ({ ...prev, revealDraws: !prev.revealDraws }));
   }
 
@@ -168,22 +176,22 @@ export function EurovisionRoulette() {
     navigator.clipboard.writeText(text);
   }
 
+  function handleClearAll() {
+    setState((prev) => ({ ...prev, guests: [] }));
+    setActiveCode(null);
+    setPhase("idle");
+  }
+
   return (
-    <main className={styles["eurovision-roulette"]}>
+    <main className={"eurovision-roulette"}>
       <SectionHero
         participantCount={state.guests.length}
-        onLaunch={() => document.getElementById("inscription-name")?.focus()}
+        phase={phase}
+        activeCode={activeCode}
+        onRegister={handleRegister}
+        onLaunch={handleLaunchSpin}
+        onRetrieve={handleRetrieve}
         onOpenAdmin={handleOpenAdmin}
-      />
-      <SectionLogsTop
-        inscription={
-          <PanelInscription
-            code={activeGuest?.code ?? null}
-            disabled={phase === "spinning"}
-            onSubmit={handleRegister}
-          />
-        }
-        retrieve={<PanelRetrieve onSubmit={handleRetrieve} />}
       />
       <SectionLeaderboard
         countries={countries}
@@ -192,6 +200,10 @@ export function EurovisionRoulette() {
         usedCountryCodes={usedCountryCodes}
         selectedSlot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
         spinningSlot={phase === "spinning" ? spinningSlot : null}
+        gif={
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/assets/eurovision-jury.gif" alt="Le jury Eurovision délibère" />
+        }
       />
       <SectionLogsBottom
         result={
@@ -199,8 +211,6 @@ export function EurovisionRoulette() {
             country={phase === "revealed" ? activeCountry : null}
             slot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
             guestName={phase === "revealed" ? activeGuest?.name ?? null : null}
-            shoppingDone={activeGuest?.shoppingDone ?? false}
-            onToggleShopping={handleToggleShopping}
             isAdmin={isAdmin}
             revealed={state.revealDraws}
             onToggleReveal={handleToggleReveal}
@@ -213,7 +223,7 @@ export function EurovisionRoulette() {
           />
         }
       />
-      <div className={styles["eurovision-roulette__live"]} role="status" aria-live="polite" aria-atomic="true">
+      <div className={"eurovision-roulette__live"} role="status" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
       <AdminDrawer
@@ -224,6 +234,7 @@ export function EurovisionRoulette() {
         onUnlock={() => setAdminUnlocked(true)}
         onToggleReveal={handleToggleReveal}
         onCopyCodes={handleCopyCodes}
+        onClearAll={handleClearAll}
         onReroll={handleReroll}
         onRemove={handleRemove}
       />

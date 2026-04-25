@@ -1,0 +1,24 @@
+.section-logs-top {
+  position: relative;
+  margin-top: -2.5rem;
+  padding-block: var(--space-2);
+  padding-inline: var(--grid-margin);
+  z-index: 2;
+}
+
+.section-logs-top__inner {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+@media (max-width: 80rem) {
+  .section-logs-top {
+    padding-inline: var(--space-6);
+    padding-block: var(--space-6);
+  }
+
+  .section-logs-top__inner {
+    flex-direction: column;
+  }
+}

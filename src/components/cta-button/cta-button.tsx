@@ -1,5 +1,4 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import styles from "./cta-button.module.css";
 
 type Variant = "primary" | "panel" | "icon-only" | "secondary";
 type Surface = "light" | "dark";
@@ -20,9 +19,9 @@ export function CtaButton({
   ...rest
 }: CtaButtonProps) {
   const classNames = [
-    styles["cta-button"],
-    styles[`cta-button--${variant}`],
-    styles[`cta-button--surface-${surface}`],
+    "cta-button",
+    `cta-button--${variant}`,
+    surface !== "light" ? `cta-button--surface-${surface}` : null,
     className
   ]
     .filter(Boolean)
@@ -30,10 +29,10 @@ export function CtaButton({
 
   return (
     <button type="button" className={classNames} {...rest}>
-      <span className={styles["cta-button__bevel"]} aria-hidden="true" />
-      <span className={styles["cta-button__inner"]}>
-        {icon ? <span className={styles["cta-button__icon"]} aria-hidden="true">{icon}</span> : null}
-        {children ? <span className={styles["cta-button__label"]}>{children}</span> : null}
+      <span className={"cta-button__bevel"} aria-hidden="true" />
+      <span className={"cta-button__inner"}>
+        {icon ? <span className={"cta-button__icon"} aria-hidden="true">{icon}</span> : null}
+        {children ? <span className={"cta-button__label"}>{children}</span> : null}
       </span>
     </button>
   );

@@ -860,7 +860,6 @@ export function EurovisionLogo({ size = "md", className }: EurovisionLogoProps) 
 .eurovision-logo__img {
   display: block;
   width: 100%;
-  height: 100%;
 }
 ```
 
@@ -1103,7 +1102,6 @@ export function SectionHero({ participantCount, onLaunch, onOpenAdmin }: Section
   .section-hero {
     height: auto;
     min-height: 100vh;
-    padding-block: var(--space-10);
   }
 
   .section-hero__title {

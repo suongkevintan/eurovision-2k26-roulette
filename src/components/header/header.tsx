@@ -1,7 +1,6 @@
 import { Settings, Users } from "lucide-react";
 import { CtaButton } from "@/components/cta-button/cta-button";
 import { EurovisionLogo } from "@/components/eurovision-logo/eurovision-logo";
-import styles from "./header.module.css";
 
 type HeaderProps = {
   participantCount: number;
@@ -10,14 +9,14 @@ type HeaderProps = {
 
 export function Header({ participantCount, onOpenAdmin }: HeaderProps) {
   return (
-    <header className={styles["header"]}>
-      <div className={styles["header__logo"]}>
+    <header className={"header"}>
+      <div className={"header__logo"}>
         <EurovisionLogo size="md" />
       </div>
-      <div className={styles["header__incentive"]} role="status">
+      <div className={"header__incentive"} role="status">
         <Users size={24} aria-hidden="true" />
-        <p className={styles["header__incentive-text"]}>
-          <span className={styles["header__incentive-count"]}>{participantCount}</span>
+        <p className={"header__incentive-text"}>
+          <span className={"header__incentive-count"}>{participantCount}</span>
           {` participant·es en lice`}
         </p>
       </div>

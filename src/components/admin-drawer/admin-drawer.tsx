@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Clipboard, Eye, EyeOff, RefreshCw, Trash2, X } from "lucide-react";
+import { Clipboard, Eye, EyeOff, RefreshCw, Trash2, Trash, X } from "lucide-react";
 import { CtaButton } from "@/components/cta-button/cta-button";
 import { countries } from "@/lib/data";
 import type { Guest } from "@/lib/types";
-import styles from "./admin-drawer.module.css";
 
 const ADMIN_PIN = "1974";
 
@@ -19,6 +18,7 @@ type AdminDrawerProps = {
   onCopyCodes: () => void;
   onReroll: (guest: Guest) => void;
   onRemove: (guest: Guest) => void;
+  onClearAll: () => void;
 };
 
 export function AdminDrawer({
@@ -30,7 +30,8 @@ export function AdminDrawer({
   onToggleReveal,
   onCopyCodes,
   onReroll,
-  onRemove
+  onRemove,
+  onClearAll
 }: AdminDrawerProps) {
   const [pin, setPin] = useState("");
   const [unlocked, setUnlocked] = useState(false);
@@ -59,27 +60,27 @@ export function AdminDrawer({
 
   return (
     <div
-      className={styles["admin-drawer"]}
+      className={"admin-drawer"}
       role="dialog"
       aria-modal="true"
       aria-labelledby="admin-drawer-title"
     >
       <button
         type="button"
-        className={styles["admin-drawer__backdrop"]}
+        className={"admin-drawer__backdrop"}
         onClick={onClose}
         aria-label="Fermer le panneau admin (cliquer en dehors)"
       />
-      <div className={styles["admin-drawer__panel"]}>
-        <header className={styles["admin-drawer__header"]}>
-          <h2 id="admin-drawer-title" className={styles["admin-drawer__title"]}>
+      <div className={"admin-drawer__panel"}>
+        <header className={"admin-drawer__header"}>
+          <h2 id="admin-drawer-title" className={"admin-drawer__title"}>
             Panneau admin
           </h2>
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className={styles["admin-drawer__close"]}
+            className={"admin-drawer__close"}
             aria-label="Fermer le panneau admin"
           >
             <X size={20} aria-hidden="true" />
@@ -87,7 +88,7 @@ export function AdminDrawer({
         </header>
         {!unlocked ? (
           <form
-            className={styles["admin-drawer__pin-form"]}
+            className={"admin-drawer__pin-form"}
             onSubmit={(e) => {
               e.preventDefault();
               if (pin === ADMIN_PIN) {
@@ -98,14 +99,14 @@ export function AdminDrawer({
               }
             }}
           >
-            <label htmlFor="admin-pin" className={styles["admin-drawer__label"]}>
+            <label htmlFor="admin-pin" className={"admin-drawer__label"}>
               PIN admin
             </label>
             <input
               id="admin-pin"
               type="password"
               autoComplete="off"
-              className={styles["admin-drawer__input"]}
+              className={"admin-drawer__input"}
               value={pin}
               onChange={(e) => setPin(e.target.value)}
               autoFocus
@@ -115,8 +116,8 @@ export function AdminDrawer({
             </CtaButton>
           </form>
         ) : (
-          <div className={styles["admin-drawer__content"]}>
-            <div className={styles["admin-drawer__actions"]}>
+          <div className={"admin-drawer__content"}>
+            <div className={"admin-drawer__actions"}>
               <CtaButton
                 variant="panel"
                 icon={revealDraws ? <EyeOff /> : <Eye />}
@@ -132,13 +133,23 @@ export function AdminDrawer({
               >
                 Copier codes
               </CtaButton>
+              <CtaButton
+                variant="panel"
+                icon={<Trash />}
+                onClick={() => {
+                  if (window.confirm("Supprimer tous les participants ?")) onClearAll();
+                }}
+                disabled={!guests.length}
+              >
+                Tout supprimer
+              </CtaButton>
             </div>
-            <ul className={styles["admin-drawer__list"]}>
+            <ul className={"admin-drawer__list"}>
               {guests.map((guest) => {
                 const country = countries.find((c) => c.code === guest.countryCode);
                 return (
-                  <li key={guest.id} className={styles["admin-drawer__row"]}>
-                    <div className={styles["admin-drawer__row-info"]}>
+                  <li key={guest.id} className={"admin-drawer__row"}>
+                    <div className={"admin-drawer__row-info"}>
                       <strong>{guest.name}</strong>
                       <span>{guest.code}</span>
                       <span>
@@ -147,7 +158,7 @@ export function AdminDrawer({
                     </div>
                     <button
                       type="button"
-                      className={styles["admin-drawer__row-action"]}
+                      className={"admin-drawer__row-action"}
                       onClick={() => onReroll(guest)}
                       aria-label={`Reroll ${guest.name}`}
                     >
@@ -155,7 +166,7 @@ export function AdminDrawer({
                     </button>
                     <button
                       type="button"
-                      className={`${styles["admin-drawer__row-action"]} ${styles["admin-drawer__row-action--danger"]}`}
+                      className={`${"admin-drawer__row-action"} ${"admin-drawer__row-action--danger"}`}
                       onClick={() => onRemove(guest)}
                       aria-label={`Supprimer ${guest.name}`}
                     >
@@ -165,7 +176,7 @@ export function AdminDrawer({
                 );
               })}
               {!guests.length ? (
-                <li className={styles["admin-drawer__empty"]}>Aucun participant pour l&apos;instant.</li>
+                <li className={"admin-drawer__empty"}>Aucun participant pour l&apos;instant.</li>
               ) : null}
             </ul>
           </div>

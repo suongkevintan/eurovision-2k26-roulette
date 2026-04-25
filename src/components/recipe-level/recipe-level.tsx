@@ -1,10 +1,9 @@
 import type { Difficulty } from "@/lib/types";
-import styles from "./recipe-level.module.css";
 
 const difficultyMeta: Record<Difficulty, { stars: number; label: string }> = {
-  Facile: { stars: 1, label: "Niveau accessible" },
-  Moyen: { stars: 2, label: "Niveau intermédiaire" },
-  Challenge: { stars: 3, label: "Niveau audacieux" }
+  Facile: { stars: 1, label: "1 étoile Michelin" },
+  Moyen: { stars: 2, label: "2 étoiles Michelin" },
+  Challenge: { stars: 3, label: "3 étoiles Michelin" }
 };
 
 type RecipeLevelProps = {
@@ -15,23 +14,16 @@ type RecipeLevelProps = {
 export function RecipeLevel({ difficulty, count }: RecipeLevelProps) {
   const meta = difficultyMeta[difficulty];
   return (
-    <div className={styles["recipe-level"]}>
-      <div className={styles["recipe-level__stars"]} aria-hidden="true">
+    <div className={"recipe-level"}>
+      <div className={"recipe-level__stars"} aria-hidden="true">
         {Array.from({ length: 3 }).map((_, i) => (
-          <span
-            key={i}
-            className={
-              i < meta.stars
-                ? `${styles["recipe-level__star"]} ${styles["recipe-level__star--filled"]}`
-                : styles["recipe-level__star"]
-            }
-          />
+          <span key={i} className={"recipe-level__star"} data-filled={i < meta.stars ? "true" : undefined}>
+            ★
+          </span>
         ))}
       </div>
-      <span className={styles["recipe-level__label"]}>
-        {difficulty} — {meta.label}
-      </span>
-      <span className={styles["recipe-level__details"]}>{count} recette{count > 1 ? "s" : ""}</span>
+      <span className={"recipe-level__label"}>{meta.label}</span>
+      <span className={"recipe-level__details"}>{count} recette{count > 1 ? "s" : ""}</span>
     </div>
   );
 }

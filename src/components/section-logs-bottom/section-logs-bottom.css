@@ -1,0 +1,30 @@
+.section-logs-bottom {
+  padding-block: var(--space-10);
+  padding-inline: var(--grid-margin);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 48rem) {
+  .section-logs-bottom {
+    padding-block: var(--space-6);
+  }
+}
+
+.section-logs-bottom__inner {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+@media (max-width: 80rem) {
+  .section-logs-bottom {
+    padding-inline: var(--space-6);
+  }
+
+  .section-logs-bottom__inner {
+    flex-direction: column;
+  }
+}

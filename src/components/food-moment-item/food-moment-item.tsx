@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
-import styles from "./food-moment-item.module.css";
 
 type FoodMomentItemState = "default" | "spinning" | "selected";
 
@@ -12,21 +11,21 @@ type FoodMomentItemProps = {
 
 export function FoodMomentItem({ label, icon, state = "default" }: FoodMomentItemProps) {
   const classNames = [
-    styles["food-moment-item"],
-    state !== "default" ? styles[`food-moment-item--${state}`] : null
+    "food-moment-item",
+    state !== "default" ? `food-moment-item--${state}` : null
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div className={classNames} data-state={state}>
-      <span className={styles["food-moment-item__icon"]} aria-hidden="true">
+      <span className={"food-moment-item__icon"} aria-hidden="true">
         {icon}
       </span>
-      <span className={styles["food-moment-item__name"]}>
-        <span className={styles["food-moment-item__name-text"]}>{label}</span>
+      <span className={"food-moment-item__name"}>
+        <span className={"food-moment-item__name-text"}>{label}</span>
         {state === "selected" ? (
-          <span className={styles["food-moment-item__check"]} aria-hidden="true">
+          <span className={"food-moment-item__check"} aria-hidden="true">
             <Check size={24} />
           </span>
         ) : null}

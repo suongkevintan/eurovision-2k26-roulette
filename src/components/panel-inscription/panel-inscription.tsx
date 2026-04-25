@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Sparkles, UserPlus } from "lucide-react";
 import { CtaButton } from "@/components/cta-button/cta-button";
-import styles from "./panel-inscription.module.css";
 
 type PanelInscriptionProps = {
   code: string | null;
@@ -21,16 +20,16 @@ export function PanelInscription({ code, disabled, onSubmit }: PanelInscriptionP
   }
 
   return (
-    <section className={styles["panel-inscription"]} aria-labelledby="inscription-title">
-      <header className={styles["panel-inscription__header"]}>
+    <section className={"panel-inscription"} aria-labelledby="inscription-title">
+      <header className={"panel-inscription__header"}>
         <UserPlus size={24} aria-hidden="true" />
-        <h2 id="inscription-title" className={styles["panel-inscription__title"]}>
+        <h2 id="inscription-title" className={"panel-inscription__title"}>
           Inscription
         </h2>
       </header>
-      <form className={styles["panel-inscription__form"]} onSubmit={handleSubmit}>
-        <div className={styles["panel-inscription__field"]}>
-          <label htmlFor="inscription-name" className={styles["panel-inscription__label"]}>
+      <form className={"panel-inscription__form"} onSubmit={handleSubmit}>
+        <div className={"panel-inscription__field"}>
+          <label htmlFor="inscription-name" className={"panel-inscription__label"}>
             Prénom
           </label>
           <input
@@ -38,23 +37,23 @@ export function PanelInscription({ code, disabled, onSubmit }: PanelInscriptionP
             type="text"
             autoComplete="given-name"
             placeholder="John Doe"
-            className={styles["panel-inscription__input"]}
+            className={"panel-inscription__input"}
             value={name}
             onChange={(event) => setName(event.target.value)}
             disabled={disabled}
           />
         </div>
-        <div className={styles["panel-inscription__field"]}>
-          <span className={styles["panel-inscription__label"]}>Code</span>
+        <div className={"panel-inscription__field"}>
+          <span className={"panel-inscription__label"}>Code</span>
           <div
-            className={styles["panel-inscription__code"]}
+            className={"panel-inscription__code"}
             role="status"
             aria-live="polite"
             aria-label={code ? `Votre code est ${code}` : "Code en attente"}
           >
             {code ?? "— — —"}
           </div>
-          <p className={styles["panel-inscription__help"]}>
+          <p className={"panel-inscription__help"}>
             Ce code permet de retrouver le résultat et le profil.
           </p>
         </div>
