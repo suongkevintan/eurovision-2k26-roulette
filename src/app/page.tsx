@@ -4,7 +4,9 @@ import { useState } from "react";
 import { PanelInscription } from "@/components/panel-inscription/panel-inscription";
 import { PanelRetrieve } from "@/components/panel-retrieve/panel-retrieve";
 import { SectionHero } from "@/components/section-hero/section-hero";
+import { SectionLeaderboard } from "@/components/section-leaderboard/section-leaderboard";
 import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
+import { countries } from "@/lib/data";
 import { makeCode } from "@/lib/roulette";
 
 export default function Home() {
@@ -12,13 +14,8 @@ export default function Home() {
   const [participantCount, setParticipantCount] = useState(0);
 
   function handleRegister(name: string) {
-    // Temporary: full orchestration with persistence comes in Batch 7
     setCode(makeCode(name));
     setParticipantCount((c) => c + 1);
-  }
-
-  function handleRetrieve(submittedCode: string) {
-    console.log("retrieve code:", submittedCode);
   }
 
   return (
@@ -29,7 +26,15 @@ export default function Home() {
       />
       <SectionLogsTop
         inscription={<PanelInscription code={code} onSubmit={handleRegister} />}
-        retrieve={<PanelRetrieve onSubmit={handleRetrieve} />}
+        retrieve={<PanelRetrieve onSubmit={(c) => console.log(c)} />}
+      />
+      <SectionLeaderboard
+        countries={countries}
+        selectedCountryCode="FR"
+        spinningCountryCode={null}
+        usedCountryCodes={new Set(["IT"])}
+        selectedSlot="entree"
+        spinningSlot={null}
       />
     </main>
   );
