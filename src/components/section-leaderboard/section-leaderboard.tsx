@@ -34,7 +34,11 @@ export function SectionLeaderboard({
   spinningSlot
 }: SectionLeaderboardProps) {
   return (
-    <section className={styles["section-leaderboard"]} aria-label="Tableau des pays et moments du dîner">
+    <section
+      id="section-leaderboard"
+      className={styles["section-leaderboard"]}
+      aria-label="Tableau des pays et moments du dîner"
+    >
       <div className={styles["section-leaderboard__inner"]}>
         <div className={styles["section-leaderboard__countries"]}>
           {countries.map((country) => {

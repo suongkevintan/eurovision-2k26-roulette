@@ -20,6 +20,15 @@ type Phase = "idle" | "spinning" | "revealed";
 const ADMIN_PIN = "1974";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
+function scrollIntoLeaderboard() {
+  const leaderboard = document.getElementById("section-leaderboard");
+  if (!leaderboard) return;
+  const rect = leaderboard.getBoundingClientRect();
+  const absoluteTop = rect.top + window.scrollY;
+  const target = absoluteTop - (window.innerHeight - rect.height) / 2;
+  window.scrollTo({ top: Math.max(target, 0), behavior: "smooth" });
+}
+
 export function EurovisionRoulette() {
   const [state, setState] = useState<RouletteState>({ revealDraws: false, guests: [] });
   const [activeCode, setActiveCode] = useState<string | null>(null);
@@ -92,6 +101,7 @@ export function EurovisionRoulette() {
           return { ...prev, guests: [...prev.guests, guest] };
         });
         setPhase("revealed");
+        scrollIntoLeaderboard();
       }, 5000);
       timeouts.current.push(completeId);
     },
