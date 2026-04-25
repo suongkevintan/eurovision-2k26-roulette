@@ -267,7 +267,7 @@ const dishSet = (
     [apEasy, stEasy, deEasy],
     [apMedium, stMedium, deMedium],
     [apHard, stHard, deHard],
-    "apero"
+    "snacks"
   )
 });
 
