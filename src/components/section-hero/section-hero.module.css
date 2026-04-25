@@ -48,7 +48,10 @@
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-h1);
   color: var(--color-text-on-dark);
+  width: 100%;
   max-width: 49.75rem; /* 796px */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .section-hero__body {
@@ -57,6 +60,7 @@
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-body);
   color: var(--color-text-on-dark);
+  width: 100%;
   max-width: 39.625rem; /* 634px */
 }
 
