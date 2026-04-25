@@ -11,7 +11,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest } from "@/lib/roulette";
-import { generateSpinTicks } from "@/lib/spinning";
+import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
 import { hasSupabase, loadState, persistState } from "@/lib/storage";
 import type { DinnerSlot, RouletteState } from "@/lib/types";
 import styles from "./eurovision-roulette.module.css";
@@ -72,22 +72,27 @@ export function EurovisionRoulette() {
       setPhase("spinning");
       setLiveMessage("Tirage en cours, sélection aléatoire pendant 5 secondes.");
 
-      const countryTicks = generateSpinTicks(countries.length, 5000);
-      const slotTicks = generateSpinTicks(SLOT_ORDER.length, 5000);
+      const reducedMotion = prefersReducedMotion();
+      const totalMs = reducedMotion ? 800 : 5000;
 
-      countryTicks.forEach((tick) => {
-        const id = window.setTimeout(() => {
-          setSpinningCountryCode(countries[tick.index].code);
-        }, tick.delay);
-        timeouts.current.push(id);
-      });
+      if (!reducedMotion) {
+        const countryTicks = generateSpinTicks(countries.length, totalMs);
+        const slotTicks = generateSpinTicks(SLOT_ORDER.length, totalMs);
 
-      slotTicks.forEach((tick) => {
-        const id = window.setTimeout(() => {
-          setSpinningSlot(SLOT_ORDER[tick.index]);
-        }, tick.delay + 80);
-        timeouts.current.push(id);
-      });
+        countryTicks.forEach((tick) => {
+          const id = window.setTimeout(() => {
+            setSpinningCountryCode(countries[tick.index].code);
+          }, tick.delay);
+          timeouts.current.push(id);
+        });
+
+        slotTicks.forEach((tick) => {
+          const id = window.setTimeout(() => {
+            setSpinningSlot(SLOT_ORDER[tick.index]);
+          }, tick.delay + 80);
+          timeouts.current.push(id);
+        });
+      }
 
       const completeId = window.setTimeout(() => {
         setSpinningCountryCode(null);
@@ -102,7 +107,7 @@ export function EurovisionRoulette() {
         });
         setPhase("revealed");
         scrollIntoLeaderboard();
-      }, 5000);
+      }, totalMs);
       timeouts.current.push(completeId);
     },
     []
