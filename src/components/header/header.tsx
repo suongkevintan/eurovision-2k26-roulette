@@ -10,15 +10,11 @@ type HeaderProps = {
 
 export function Header({ participantCount, onOpenAdmin }: HeaderProps) {
   return (
-    <header className={styles.header}>
-      <div className={styles.header__logo}>
+    <header className={styles["header"]}>
+      <div className={styles["header__logo"]}>
         <EurovisionLogo size="md" />
       </div>
-      <div
-        className={styles.header__incentive}
-        role="status"
-        aria-label={`${participantCount} participants en lice`}
-      >
+      <div className={styles["header__incentive"]} role="status">
         <Users size={24} aria-hidden="true" />
         <p className={styles["header__incentive-text"]}>
           <span className={styles["header__incentive-count"]}>{participantCount}</span>

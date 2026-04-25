@@ -15,7 +15,7 @@ export function EurovisionLogo({ size = "md", className }: EurovisionLogoProps) 
   const px = sizeMap[size];
   const classNames = [styles["eurovision-logo"], className].filter(Boolean).join(" ");
   return (
-    <span className={classNames} aria-label="Eurovision Roulette">
+    <span className={classNames} role="img" aria-label="Eurovision Roulette">
       <img
         src="/assets/eurovision-logo.svg"
         alt=""
