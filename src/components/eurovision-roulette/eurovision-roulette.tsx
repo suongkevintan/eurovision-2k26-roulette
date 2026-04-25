@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelInscription } from "@/components/panel-inscription/panel-inscription";
 import { PanelRecipes } from "@/components/panel-recipes/panel-recipes";
 import { PanelResult } from "@/components/panel-result/panel-result";
@@ -9,29 +9,37 @@ import { SectionHero } from "@/components/section-hero/section-hero";
 import { SectionLeaderboard } from "@/components/section-leaderboard/section-leaderboard";
 import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs-bottom";
 import { SectionLogsTop } from "@/components/section-logs-top/section-logs-top";
-import { countries } from "@/lib/data";
+import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest } from "@/lib/roulette";
+import { generateSpinTicks } from "@/lib/spinning";
 import { hasSupabase, loadState, persistState } from "@/lib/storage";
-import type { Guest, RouletteState } from "@/lib/types";
+import type { DinnerSlot, RouletteState } from "@/lib/types";
 import styles from "./eurovision-roulette.module.css";
 
+type Phase = "idle" | "spinning" | "revealed";
 const ADMIN_PIN = "1974";
+const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 export function EurovisionRoulette() {
   const [state, setState] = useState<RouletteState>({ revealDraws: false, guests: [] });
   const [activeCode, setActiveCode] = useState<string | null>(null);
   const [adminPin, setAdminPin] = useState("");
-  const [, setStatus] = useState("Chargement...");
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [spinningCountryCode, setSpinningCountryCode] = useState<string | null>(null);
+  const [spinningSlot, setSpinningSlot] = useState<DinnerSlot | null>(null);
+  const [liveMessage, setLiveMessage] = useState("");
+  const timeouts = useRef<number[]>([]);
 
   useEffect(() => {
-    loadState().then((loaded) => {
-      setState(loaded);
-      setStatus(hasSupabase ? "Synchronisé avec Supabase" : "Mode local prêt");
-    });
+    loadState().then(setState);
+    const ids = timeouts.current;
+    return () => {
+      ids.forEach((id) => window.clearTimeout(id));
+    };
   }, []);
 
   useEffect(() => {
-    persistState(state).catch(() => setStatus("Sauvegarde locale active, Supabase indisponible"));
+    persistState(state).catch(() => undefined);
   }, [state]);
 
   const isAdmin = adminPin === ADMIN_PIN;
@@ -50,17 +58,54 @@ export function EurovisionRoulette() {
     ? countries.find((c) => c.code === activeGuest.countryCode) ?? null
     : null;
 
+  const startSpin = useCallback(
+    (name: string) => {
+      setPhase("spinning");
+      setLiveMessage("Tirage en cours, sélection aléatoire pendant 5 secondes.");
+
+      const countryTicks = generateSpinTicks(countries.length, 5000);
+      const slotTicks = generateSpinTicks(SLOT_ORDER.length, 5000);
+
+      countryTicks.forEach((tick) => {
+        const id = window.setTimeout(() => {
+          setSpinningCountryCode(countries[tick.index].code);
+        }, tick.delay);
+        timeouts.current.push(id);
+      });
+
+      slotTicks.forEach((tick) => {
+        const id = window.setTimeout(() => {
+          setSpinningSlot(SLOT_ORDER[tick.index]);
+        }, tick.delay + 80);
+        timeouts.current.push(id);
+      });
+
+      const completeId = window.setTimeout(() => {
+        setSpinningCountryCode(null);
+        setSpinningSlot(null);
+        setState((prev) => {
+          const guest = createGuest(name, prev.guests);
+          setActiveCode(guest.code);
+          const country = countries.find((c) => c.code === guest.countryCode);
+          const slotLabel = dinnerSlots[guest.dinnerSlot].label;
+          setLiveMessage(`Résultat : ${country?.name ?? "?"}, ${slotLabel.toLowerCase()}.`);
+          return { ...prev, guests: [...prev.guests, guest] };
+        });
+        setPhase("revealed");
+      }, 5000);
+      timeouts.current.push(completeId);
+    },
+    []
+  );
+
   function handleRegister(name: string) {
-    setState((prev) => {
-      const guest = createGuest(name, prev.guests);
-      const next: RouletteState = { ...prev, guests: [...prev.guests, guest] };
-      setActiveCode(guest.code);
-      return next;
-    });
+    if (phase === "spinning") return;
+    startSpin(name);
   }
 
   function handleRetrieve(code: string) {
     setActiveCode(code);
+    setPhase("revealed");
   }
 
   function handleToggleShopping() {
@@ -82,8 +127,8 @@ export function EurovisionRoulette() {
     if (input) setAdminPin(input);
   }
 
-  // Suppress unused var warning — Guest type used in Task 17
-  void (null as unknown as Guest);
+  // Suppress unused var warning for hasSupabase (used in Batch 8 status display)
+  void hasSupabase;
 
   return (
     <main className={styles["eurovision-roulette"]}>
@@ -96,6 +141,7 @@ export function EurovisionRoulette() {
         inscription={
           <PanelInscription
             code={activeGuest?.code ?? null}
+            disabled={phase === "spinning"}
             onSubmit={handleRegister}
           />
         }
@@ -103,18 +149,18 @@ export function EurovisionRoulette() {
       />
       <SectionLeaderboard
         countries={countries}
-        selectedCountryCode={activeGuest?.countryCode ?? null}
-        spinningCountryCode={null}
+        selectedCountryCode={phase === "revealed" ? activeGuest?.countryCode ?? null : null}
+        spinningCountryCode={phase === "spinning" ? spinningCountryCode : null}
         usedCountryCodes={usedCountryCodes}
-        selectedSlot={activeGuest?.dinnerSlot ?? null}
-        spinningSlot={null}
+        selectedSlot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
+        spinningSlot={phase === "spinning" ? spinningSlot : null}
       />
       <SectionLogsBottom
         result={
           <PanelResult
-            country={activeCountry}
-            slot={activeGuest?.dinnerSlot ?? null}
-            guestName={activeGuest?.name ?? null}
+            country={phase === "revealed" ? activeCountry : null}
+            slot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
+            guestName={phase === "revealed" ? activeGuest?.name ?? null : null}
             shoppingDone={activeGuest?.shoppingDone ?? false}
             onToggleShopping={handleToggleShopping}
             isAdmin={isAdmin}
@@ -124,11 +170,14 @@ export function EurovisionRoulette() {
         }
         recipes={
           <PanelRecipes
-            country={activeCountry}
-            slot={activeGuest?.dinnerSlot ?? null}
+            country={phase === "revealed" ? activeCountry : null}
+            slot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
           />
         }
       />
+      <div className={styles["eurovision-roulette__live"]} role="status" aria-live="polite" aria-atomic="true">
+        {liveMessage}
+      </div>
     </main>
   );
 }
