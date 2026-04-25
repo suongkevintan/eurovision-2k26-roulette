@@ -2,9 +2,10 @@ import type { Country, Difficulty, DinnerSlot, Dish } from "./types";
 
 export const dinnerSlots: Record<DinnerSlot, { label: string; short: string; tone: string }> = {
   apero: { label: "Apéro", short: "AP", tone: "#00b4d8" },
-  entree: { label: "Petite entrée", short: "EN", tone: "#8ac926" },
+  entree: { label: "Entrée", short: "EN", tone: "#8ac926" },
   plat: { label: "Plat principal", short: "PL", tone: "#ff4d6d" },
-  dessert: { label: "Dessert", short: "DE", tone: "#ffbe0b" }
+  dessert: { label: "Dessert", short: "DE", tone: "#ffbe0b" },
+  snacks: { label: "Snacks", short: "SN", tone: "#9d4edd" }
 };
 
 const slugify = (value: string) =>
@@ -182,6 +183,11 @@ const proposals = (easy: string[], medium: string[], hard: string[], slot: Dinne
       "Douceur populaire, facile à découper ou partager le soir du concours.",
       "Dessert de fête ou de café, avec une vraie identité locale.",
       "Pâtisserie iconique: le genre de dessert qui mérite ses douze points."
+    ],
+    snacks: [
+      "Bouchée à grignoter, parfaite pour patienter pendant les performances.",
+      "Petit format relevé, à attraper d'une main pendant que l'autre tient le verre.",
+      "Snack signature du pays, à servir en milieu de soirée pour relancer."
     ]
   };
   const shoppingBySlot: Record<DinnerSlot, string[][]> = {
@@ -204,6 +210,11 @@ const proposals = (easy: string[], medium: string[], hard: string[], slot: Dinne
       ["sucre", "farine", "beurre"],
       ["creme", "fruits ou noix", "pâte"],
       ["pâte fine", "garniture", "sirop ou glaçage"]
+    ],
+    snacks: [
+      ["pain ou base", "garniture salée", "herbes"],
+      ["pâte feuilletée", "fromage", "épices"],
+      ["base maison", "garniture signature", "sauce"]
     ]
   };
 
@@ -251,6 +262,12 @@ const dishSet = (
     [apEasy, apMedium, stEasy],
     [apHard, stMedium, stHard],
     "dessert"
+  ),
+  snacks: proposals(
+    [apEasy, stEasy, deEasy],
+    [apMedium, stMedium, deMedium],
+    [apHard, stHard, deHard],
+    "apero"
   )
 });
 

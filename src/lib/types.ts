@@ -1,4 +1,4 @@
-export type DinnerSlot = "apero" | "entree" | "plat" | "dessert";
+export type DinnerSlot = "apero" | "entree" | "plat" | "dessert" | "snacks";
 export type Difficulty = "Facile" | "Moyen" | "Challenge";
 
 export type Dish = {
@@ -25,6 +25,7 @@ export type Country = {
   song: string;
   color: string;
   dishes: Record<DinnerSlot, Dish[]>;
+  youtubeId?: string;
 };
 
 export type Guest = {

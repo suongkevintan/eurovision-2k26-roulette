@@ -1,7 +1,7 @@
 import { countries, dinnerSlots } from "./data";
 import type { DinnerSlot, Guest } from "./types";
 
-const slotOrder: DinnerSlot[] = ["apero", "entree", "plat", "dessert"];
+const slotOrder: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 export function makeCode(name: string) {
   const stem = name
@@ -15,15 +15,15 @@ export function makeCode(name: string) {
 }
 
 export function expectedDistribution(total: number): Record<DinnerSlot, number> {
-  const base = { apero: 0, entree: 0, plat: 0, dessert: 0 };
+  const base = { apero: 0, entree: 0, plat: 0, dessert: 0, snacks: 0 };
   if (total <= 0) return base;
-  const weights: Record<DinnerSlot, number> = { apero: 2, entree: 3, plat: 2, dessert: 2 };
+  const weights: Record<DinnerSlot, number> = { apero: 2, entree: 2, plat: 3, dessert: 1, snacks: 1 };
   let allocated = 0;
   for (const slot of slotOrder) {
     base[slot] = Math.floor((total * weights[slot]) / 9);
     allocated += base[slot];
   }
-  const priority: DinnerSlot[] = ["entree", "apero", "plat", "dessert"];
+  const priority: DinnerSlot[] = ["entree", "apero", "plat", "dessert", "snacks"];
   while (allocated < total) {
     base[priority[allocated % priority.length]] += 1;
     allocated += 1;
@@ -67,7 +67,7 @@ export function countBySlot(guests: Guest[]) {
       acc[guest.dinnerSlot] += 1;
       return acc;
     },
-    { apero: 0, entree: 0, plat: 0, dessert: 0 } as Record<DinnerSlot, number>
+    { apero: 0, entree: 0, plat: 0, dessert: 0, snacks: 0 } as Record<DinnerSlot, number>
   );
 }
 
