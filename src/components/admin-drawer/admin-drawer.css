@@ -1,6 +1,9 @@
 .admin-drawer {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: var(--z-drawer);
   display: flex;
   justify-content: flex-end;
@@ -8,7 +11,10 @@
 
 .admin-drawer__backdrop {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: rgba(5, 11, 48, 0.6);
   backdrop-filter: blur(4px);
   border: 0;
@@ -90,6 +96,73 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+}
+
+.admin-drawer__cta {
+  align-self: flex-start;
+  min-height: 2.75rem;
+  border-radius: var(--radius-md);
+}
+
+.admin-drawer__pin-form > .admin-drawer__cta {
+  align-self: stretch;
+}
+
+.admin-drawer__actions > .admin-drawer__cta {
+  flex: 1 1 11.5rem;
+}
+
+.admin-drawer__cta .cta-button__bevel {
+  border: 1px solid rgba(24, 24, 24, 0.18);
+  background-color: rgba(24, 24, 24, 0.16);
+}
+
+.admin-drawer__cta .cta-button__inner {
+  width: 100%;
+  min-height: 2.75rem;
+  background-color: var(--color-text-on-light);
+  color: var(--color-text-on-dark);
+  box-shadow: 0 10px 26px rgba(24, 24, 24, 0.12);
+}
+
+.admin-drawer__cta .cta-button__icon > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.admin-drawer__cta:not(:disabled):hover .cta-button__inner {
+  background-color: #2a2a2a;
+  box-shadow: 0 14px 30px rgba(24, 24, 24, 0.18);
+}
+
+.admin-drawer__cta:not(:disabled):active .cta-button__inner {
+  background-color: #111111;
+}
+
+.admin-drawer__cta--danger .cta-button__bevel {
+  border-color: rgba(224, 35, 122, 0.38);
+  background-color: rgba(224, 35, 122, 0.22);
+}
+
+.admin-drawer__cta--danger .cta-button__inner {
+  background-color: var(--color-eurovision-pink);
+  color: var(--color-text-on-dark);
+}
+
+.admin-drawer__cta--danger:not(:disabled):hover .cta-button__inner {
+  background-color: #c91d6b;
+}
+
+.admin-drawer__cta:disabled .cta-button__bevel {
+  border-color: var(--color-border-cta);
+  background-color: var(--color-bg-input-disabled);
+  box-shadow: none;
+}
+
+.admin-drawer__cta:disabled .cta-button__inner {
+  background-color: var(--color-bg-input-disabled);
+  color: var(--color-text-muted);
+  box-shadow: none;
 }
 
 .admin-drawer__list {

@@ -111,7 +111,7 @@ export function AdminDrawer({
               onChange={(e) => setPin(e.target.value)}
               autoFocus
             />
-            <CtaButton variant="panel" type="submit">
+            <CtaButton variant="panel" type="submit" className={"admin-drawer__cta"}>
               Déverrouiller
             </CtaButton>
           </form>
@@ -120,6 +120,7 @@ export function AdminDrawer({
             <div className={"admin-drawer__actions"}>
               <CtaButton
                 variant="panel"
+                className={"admin-drawer__cta"}
                 icon={revealDraws ? <EyeOff /> : <Eye />}
                 onClick={onToggleReveal}
               >
@@ -127,6 +128,7 @@ export function AdminDrawer({
               </CtaButton>
               <CtaButton
                 variant="panel"
+                className={"admin-drawer__cta"}
                 icon={<Clipboard />}
                 onClick={onCopyCodes}
                 disabled={!guests.length}
@@ -135,6 +137,7 @@ export function AdminDrawer({
               </CtaButton>
               <CtaButton
                 variant="panel"
+                className={"admin-drawer__cta admin-drawer__cta--danger"}
                 icon={<Trash />}
                 onClick={() => {
                   if (window.confirm("Supprimer tous les participants ?")) onClearAll();

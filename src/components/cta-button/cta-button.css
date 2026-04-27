@@ -8,7 +8,9 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text-on-light);
   cursor: pointer;
-  transition: transform var(--duration-press) var(--easing-standard);
+  transition:
+    opacity 160ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
 }
 
 .cta-button:disabled {
@@ -22,10 +24,17 @@
 
 .cta-button__bevel {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   border-radius: inherit;
   background-color: var(--color-border-cta);
   z-index: 0;
+  transition:
+    background-color 180ms var(--easing-standard),
+    border-color 180ms var(--easing-standard),
+    box-shadow 180ms var(--easing-standard);
 }
 
 .cta-button__inner {
@@ -37,6 +46,11 @@
   background-color: var(--color-bg-on-light);
   box-shadow: var(--shadow-cta-soft);
   z-index: 1;
+  transition:
+    background-color 180ms var(--easing-standard),
+    color 180ms var(--easing-standard),
+    box-shadow 180ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
 }
 
 .cta-button__icon {
@@ -103,8 +117,9 @@
 }
 
 .cta-button--icon-only .cta-button__inner {
-  position: absolute;
-  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  margin: 4px;
   border-radius: 10px;
   background-color: var(--color-bg-on-light);
   box-shadow: var(--shadow-cta-mini);
