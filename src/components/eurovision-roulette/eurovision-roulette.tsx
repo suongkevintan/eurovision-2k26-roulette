@@ -139,9 +139,14 @@ export function EurovisionRoulette() {
     startSpin(guest);
   }
 
-  function handleRetrieve(code: string) {
+  function handleRetrieve(code: string): boolean {
+    const found = state.guests.find(
+      (g) => g.code.toUpperCase() === code.toUpperCase()
+    ) ?? null;
+    if (!found) return false;
     setActiveCode(code);
     setPhase("revealed");
+    return true;
   }
 
 function handleToggleReveal() {

@@ -18,7 +18,7 @@ type SectionHeroProps = {
   activeCode: string | null;
   onRegister: (name: string) => void;
   onLaunch: () => void;
-  onRetrieve: (code: string) => void;
+  onRetrieve: (code: string) => boolean;
   onOpenAdmin?: () => void;
 };
 
@@ -103,6 +103,7 @@ export function SectionHero({
   const [retrieveCode, setRetrieveCode] = useState("");
   const [mode, setMode] = useState<Mode>("register");
   const [nameError, setNameError] = useState("");
+  const [retrieveError, setRetrieveError] = useState("");
   const [codeCopied, setCodeCopied] = useState(false);
   const [adminRevealed, setAdminRevealed] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -171,7 +172,7 @@ export function SectionHero({
       ? "Collez votre code pour reprendre un tirage déjà enregistré."
       : "";
   const helperText = isRetrieveMode
-    ? "Entrez votre code pour retrouver votre tirage au sort"
+    ? retrieveError || "Entrez votre code pour retrouver votre tirage au sort"
     : nameError || "Inscrivez-vous pour obtenir votre tirage au sort";
 
   useEffect(() => {
@@ -208,9 +209,14 @@ export function SectionHero({
     event.preventDefault();
     const trimmed = retrieveCode.trim().toUpperCase();
     if (!trimmed) return;
-    onRetrieve(trimmed);
-    setMode("register");
-    setRetrieveCode("");
+    const found = onRetrieve(trimmed);
+    if (found) {
+      setMode("register");
+      setRetrieveCode("");
+      setRetrieveError("");
+    } else {
+      setRetrieveError("Code non trouvé. Vérifiez votre code et réessayez.");
+    }
   }
 
   function handleCodeCopy() {
@@ -265,7 +271,11 @@ export function SectionHero({
             </label>
             <p
               id={helperId}
-              className={`section-hero__input-helper${nameError && !isRetrieveMode ? " section-hero__input-helper--error" : ""}`}
+              className={`section-hero__input-helper${
+                (nameError && !isRetrieveMode) || (retrieveError && isRetrieveMode)
+                  ? " section-hero__input-helper--error"
+                  : ""
+              }`}
             >
               {helperText}
             </p>
@@ -300,8 +310,10 @@ export function SectionHero({
                   className={`section-hero__input${isRetrieveMode ? " section-hero__input--mono" : ""}`}
                   value={isRetrieveMode ? retrieveCode : name}
                   onChange={(e) => {
-                    if (isRetrieveMode) setRetrieveCode(e.target.value);
-                    else {
+                    if (isRetrieveMode) {
+                      setRetrieveCode(e.target.value);
+                      if (retrieveError) setRetrieveError("");
+                    } else {
                       setName(e.target.value);
                       if (nameError) setNameError("");
                     }
