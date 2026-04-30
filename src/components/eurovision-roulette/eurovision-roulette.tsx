@@ -10,7 +10,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { loadState, persistState } from "@/lib/storage";
+import { loadState, persistState, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
 type Phase = "idle" | "code_shown" | "spinning" | "revealed";
@@ -50,6 +50,21 @@ export function EurovisionRoulette() {
   useEffect(() => {
     persistState(state).catch(() => undefined);
   }, [state]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id = window.setInterval(() => {
+      loadState().then((loaded) => {
+        setState((prev) => {
+          const existingIds = new Set(prev.guests.map((g) => g.id));
+          const incoming = loaded.guests.filter((g) => !existingIds.has(g.id));
+          if (!incoming.length) return prev;
+          return { ...prev, guests: [...prev.guests, ...incoming] };
+        });
+      });
+    }, 15000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const locked = phase === "idle" || phase === "code_shown";
@@ -179,6 +194,7 @@ function handleToggleReveal() {
     if (!window.confirm(`Supprimer ${guest.name} ?`)) return;
     setState((prev) => ({ ...prev, guests: prev.guests.filter((g) => g.id !== guest.id) }));
     if (activeCode === guest.code) setActiveCode(null);
+    deleteGuestFromRemote(guest.id).catch(() => undefined);
   }
 
   function handleCopyCodes() {
@@ -190,6 +206,7 @@ function handleToggleReveal() {
     setState((prev) => ({ ...prev, guests: [] }));
     setActiveCode(null);
     setPhase("idle");
+    clearAllGuestsFromRemote().catch(() => undefined);
   }
 
   return (

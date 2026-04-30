@@ -65,12 +65,6 @@ export async function persistState(state: RouletteState) {
   const event = events?.[0];
   if (!event) return;
   await supabase.from("roulette_events").update({ reveal_draws: state.revealDraws }).eq("id", event.id);
-  const remoteIds = state.guests.map((guest) => guest.id);
-  if (remoteIds.length) {
-    await supabase.from("roulette_guests").delete().eq("event_id", event.id).not("id", "in", `(${remoteIds.join(",")})`);
-  } else {
-    await supabase.from("roulette_guests").delete().eq("event_id", event.id);
-  }
   for (const guest of state.guests) {
     await supabase.from("roulette_guests").upsert({
       id: guest.id,
@@ -83,4 +77,17 @@ export async function persistState(state: RouletteState) {
       created_at: guest.createdAt
     });
   }
+}
+
+export async function deleteGuestFromRemote(guestId: string) {
+  if (!supabase) return;
+  await supabase.from("roulette_guests").delete().eq("id", guestId);
+}
+
+export async function clearAllGuestsFromRemote() {
+  if (!supabase) return;
+  const { data: events } = await supabase.from("roulette_events").select("id").limit(1);
+  const event = events?.[0];
+  if (!event) return;
+  await supabase.from("roulette_guests").delete().eq("event_id", event.id);
 }
