@@ -29,16 +29,18 @@ export function saveLocalState(state: RouletteState) {
 
 export async function loadState(): Promise<RouletteState> {
   if (!supabase) return loadLocalState();
-  const { data: events } = await supabase.from("roulette_events").select("*").limit(1);
+  // Upsert ensures a single event row even under concurrent first loads.
+  // ignoreDuplicates: true is a no-op when the row already exists.
+  await supabase
+    .from("roulette_events")
+    .upsert({ name: "Eurovision Roulette 2026" }, { onConflict: "name", ignoreDuplicates: true });
+  const { data: events } = await supabase
+    .from("roulette_events")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .limit(1);
   const event = events?.[0];
-  if (!event) {
-    const { data } = await supabase
-      .from("roulette_events")
-      .insert({ name: "Eurovision Roulette 2026" })
-      .select()
-      .single();
-    return { revealDraws: Boolean(data?.reveal_draws), guests: [] };
-  }
+  if (!event) return { revealDraws: false, guests: [] };
   const { data: rows } = await supabase
     .from("roulette_guests")
     .select("*")
