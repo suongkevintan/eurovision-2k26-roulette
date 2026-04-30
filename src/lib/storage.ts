@@ -81,6 +81,27 @@ export async function persistState(state: RouletteState) {
   }
 }
 
+export async function saveGuestToRemote(guest: Guest) {
+  if (!supabase) return;
+  const { data: events } = await supabase
+    .from("roulette_events")
+    .select("id")
+    .order("created_at", { ascending: true })
+    .limit(1);
+  const event = events?.[0];
+  if (!event) return;
+  await supabase.from("roulette_guests").upsert({
+    id: guest.id,
+    event_id: event.id,
+    name: guest.name,
+    code: guest.code,
+    dinner_slot: guest.dinnerSlot,
+    country_code: guest.countryCode,
+    shopping_done: guest.shoppingDone,
+    created_at: guest.createdAt
+  });
+}
+
 export async function deleteGuestFromRemote(guestId: string) {
   if (!supabase) return;
   await supabase.from("roulette_guests").delete().eq("id", guestId);

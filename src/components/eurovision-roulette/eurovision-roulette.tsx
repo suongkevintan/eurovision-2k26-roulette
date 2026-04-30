@@ -10,7 +10,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { loadState, persistState, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
+import { loadState, persistState, saveGuestToRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
 type Phase = "idle" | "code_shown" | "spinning" | "revealed";
@@ -140,6 +140,7 @@ export function EurovisionRoulette() {
     setPendingGuest(guest);
     setActiveCode(guest.code);
     setPhase("code_shown");
+    saveGuestToRemote(guest).catch(() => undefined);
   }
 
   function handleLaunchSpin() {
