@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 type EurovisionLogoProps = {
   size?: "xs" | "sm" | "md" | "lg";
@@ -21,7 +22,7 @@ export function EurovisionLogo({ size = "md", className }: EurovisionLogoProps) 
       aria-label="Eurovision Roulette"
       style={{ width: px, height: px }}
     >
-      <img
+      <Image
         src="/assets/Eurovision_Logo.png"
         alt=""
         width={px}
