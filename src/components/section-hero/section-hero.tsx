@@ -284,7 +284,7 @@ export function SectionHero({
           <div className="section-hero__control-row">
             <div
               className={`section-hero__input-shell section-hero__input-shell--${primaryState}${
-                nameError && !isRetrieveMode ? " section-hero__input-shell--error" : ""
+                (nameError && !isRetrieveMode) || (retrieveError && isRetrieveMode) ? " section-hero__input-shell--error" : ""
               }`}
             >
               {codeVisible && activeCode ? (
@@ -319,7 +319,7 @@ export function SectionHero({
                     }
                   }}
                   disabled={disabled}
-                  aria-invalid={!isRetrieveMode && Boolean(nameError)}
+                  aria-invalid={(!isRetrieveMode && Boolean(nameError)) || (isRetrieveMode && Boolean(retrieveError))}
                   aria-describedby={helperId}
                 />
               )}
@@ -361,6 +361,8 @@ export function SectionHero({
                   aria-label={isRetrieveMode ? "Retour à l'inscription" : "Récupérer votre tirage au sort"}
                   onClick={() => {
                     setNameError("");
+                    setRetrieveError("");
+                    setRetrieveCode("");
                     setMode(isRetrieveMode ? "register" : "retrieve");
                   }}
                   disabled={disabled}
