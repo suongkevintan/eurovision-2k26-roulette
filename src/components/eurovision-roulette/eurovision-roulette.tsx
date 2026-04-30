@@ -38,7 +38,9 @@ export function EurovisionRoulette() {
   const timeouts = useRef<number[]>([]);
 
   useEffect(() => {
-    loadState().then(setState);
+    // Force the reveal toggle off on every page load — masking the draws is the
+    // default, even if a previous session persisted reveal_draws = true.
+    loadState().then((loaded) => setState({ ...loaded, revealDraws: false }));
     const ids = timeouts.current;
     return () => {
       ids.forEach((id) => window.clearTimeout(id));
@@ -147,6 +149,9 @@ function handleToggleReveal() {
   }
 
   function handleOpenAdmin() {
+    // Always reopen the admin drawer with the draws masked, so the host has to
+    // explicitly opt back into the reveal mode each time.
+    setState((prev) => (prev.revealDraws ? { ...prev, revealDraws: false } : prev));
     setAdminOpen(true);
   }
 
@@ -211,9 +216,6 @@ function handleToggleReveal() {
             country={phase === "revealed" ? activeCountry : null}
             slot={phase === "revealed" ? activeGuest?.dinnerSlot ?? null : null}
             guestName={phase === "revealed" ? activeGuest?.name ?? null : null}
-            isAdmin={isAdmin}
-            revealed={state.revealDraws}
-            onToggleReveal={handleToggleReveal}
           />
         }
         recipes={

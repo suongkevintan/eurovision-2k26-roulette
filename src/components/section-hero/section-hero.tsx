@@ -104,7 +104,49 @@ export function SectionHero({
   const [mode, setMode] = useState<Mode>("register");
   const [nameError, setNameError] = useState("");
   const [codeCopied, setCodeCopied] = useState(false);
+  const [adminRevealed, setAdminRevealed] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const codeCopyTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (adminRevealed) return;
+
+    const ADMIN_SEQUENCE = "azerty";
+    let buffer = "";
+    let heroVisible = true;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        heroVisible = entry.intersectionRatio > 0.4;
+      },
+      { threshold: [0, 0.4, 1] }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    function isTypingTarget(target: EventTarget | null) {
+      if (!(target instanceof HTMLElement)) return false;
+      const tag = target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+      if (target.isContentEditable) return true;
+      return false;
+    }
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key.length !== 1) return;
+      if (!heroVisible) return;
+      if (isTypingTarget(event.target)) return;
+      buffer = (buffer + event.key.toLowerCase()).slice(-ADMIN_SEQUENCE.length);
+      if (buffer === ADMIN_SEQUENCE) {
+        setAdminRevealed(true);
+      }
+    }
+
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      observer.disconnect();
+    };
+  }, [adminRevealed]);
 
   const disabled = phase === "spinning";
   const isRetrieveMode = mode === "retrieve";
@@ -192,9 +234,13 @@ export function SectionHero({
   }
 
   return (
-    <section className="section-hero">
+    <section className="section-hero" ref={sectionRef}>
       <div className="section-hero__gradient" aria-hidden="true" />
-      <Header participantCount={participantCount} onOpenAdmin={onOpenAdmin} />
+      <Header
+        participantCount={participantCount}
+        onOpenAdmin={onOpenAdmin}
+        adminVisible={adminRevealed}
+      />
       <div className="section-hero__content">
         <div className="section-hero__text">
           <h1 className="section-hero__title">
@@ -266,42 +312,51 @@ export function SectionHero({
                 />
               )}
 
+              {/* desktop only — hidden on mobile via CSS */}
               <CtaButton
                 variant="panel"
                 surface="dark"
                 type="submit"
-                className={`section-hero__primary-cta section-hero__primary-cta--${primaryState}`}
-                icon={
-                  isRetrieveMode ? (
-                    <CloudDownload />
-                  ) : codeVisible ? (
-                    <Ticket />
-                  ) : (
-                    <ArrowDownRight />
-                  )
-                }
+                aria-hidden={true}
+                tabIndex={-1}
+                className={`section-hero__primary-cta section-hero__primary-cta--${primaryState} section-hero__primary-cta--desktop`}
+                icon={isRetrieveMode ? <CloudDownload /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
                 disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : codeVisible && !canLaunchFromCode)}
               >
                 {primaryLabel}
               </CtaButton>
             </div>
 
-            <div className="section-hero__retrieve-wrapper">
+            <div className="section-hero__actions">
+              {/* mobile only — hidden on desktop via CSS */}
               <CtaButton
-                variant="icon-only"
+                variant="panel"
                 surface="dark"
-                type="button"
-                icon={isRetrieveMode ? <RotateCcw /> : <KeyRound />}
-                aria-label={isRetrieveMode ? "Retour à l'inscription" : "Récupérer votre tirage au sort"}
-                onClick={() => {
-                  setNameError("");
-                  setMode(isRetrieveMode ? "register" : "retrieve");
-                }}
-                disabled={disabled}
-              />
-              <span className="section-hero__retrieve-tooltip" aria-hidden="true">
-                {isRetrieveMode ? "Retour à l'inscription" : "Récupérez votre tirage au sort"}
-              </span>
+                type="submit"
+                className={`section-hero__primary-cta section-hero__primary-cta--${primaryState} section-hero__primary-cta--mobile`}
+                icon={isRetrieveMode ? <CloudDownload /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
+                disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : codeVisible && !canLaunchFromCode)}
+              >
+                {primaryLabel}
+              </CtaButton>
+
+              <div className="section-hero__retrieve-wrapper">
+                <CtaButton
+                  variant="icon-only"
+                  surface="dark"
+                  type="button"
+                  icon={isRetrieveMode ? <RotateCcw /> : <KeyRound />}
+                  aria-label={isRetrieveMode ? "Retour à l'inscription" : "Récupérer votre tirage au sort"}
+                  onClick={() => {
+                    setNameError("");
+                    setMode(isRetrieveMode ? "register" : "retrieve");
+                  }}
+                  disabled={disabled}
+                />
+                <span className="section-hero__retrieve-tooltip" aria-hidden="true">
+                  {isRetrieveMode ? "Retour à l'inscription" : "Récupérez votre tirage au sort"}
+                </span>
+              </div>
             </div>
           </div>
 

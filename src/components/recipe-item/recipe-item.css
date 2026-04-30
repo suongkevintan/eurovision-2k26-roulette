@@ -2,13 +2,36 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border-cta);
+  padding: var(--space-5);
+  border: 1px solid rgba(24, 24, 24, 0.08);
   border-radius: var(--radius-md);
-  background-color: var(--color-bg-on-light);
+  background-color: rgba(24, 24, 24, 0.035);
   color: var(--color-text-on-light);
   flex: 1;
   min-width: 0;
+  transition:
+    background-color 160ms var(--easing-standard),
+    border-color 160ms var(--easing-standard),
+    box-shadow 160ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
+}
+
+.recipe-item:hover {
+  background-color: rgba(24, 24, 24, 0.055);
+  border-color: rgba(24, 24, 24, 0.14);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+}
+
+.recipe-item--copied {
+  border-color: rgba(0, 199, 241, 0.42);
+  background-color: rgba(0, 199, 241, 0.08);
+}
+
+.recipe-item__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
 
 .recipe-item__index {
@@ -19,41 +42,188 @@
   color: var(--color-text-muted);
 }
 
-.recipe-item__title {
-  display: flex;
+.recipe-item__copy-state {
+  position: fixed;
+  left: 50%;
+  bottom: max(2.5rem, env(safe-area-inset-bottom));
+  z-index: 80;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  width: min(calc(100vw - var(--space-8)), 24rem);
+  min-height: 4.5rem;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(0, 199, 241, 0.18) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(224, 35, 122, 0.16) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(15, 26, 64, 0.96) 0%, rgba(7, 13, 36, 0.96) 100%);
+  color: var(--color-text-on-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(0, 199, 241, 0.32),
+    0 24px 60px rgba(2, 7, 25, 0.6),
+    0 0 48px rgba(0, 199, 241, 0.16);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  /* Static centering — keep the -50% translate outside the keyframes so the
+     toast doesn't snap back to its uncentered position when the animation ends. */
+  transform: translateX(-50%);
+  animation: recipe-item-copy-toast-in 220ms var(--easing-standard);
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.recipe-item__copy-btn {
+.recipe-item__copy-state::before {
+  /* Top accent stripe — subtle Eurovision cyan→pink gradient line */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 199, 241, 0.7) 35%,
+    rgba(224, 35, 122, 0.6) 75%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+.recipe-item__copy-state-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
-  background-color: var(--color-bg-input-disabled);
-  transition: color 120ms ease, background-color 120ms ease;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(0, 199, 241, 0.42), rgba(0, 199, 241, 0.08) 75%);
+  color: var(--color-eurovision-cyan);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 199, 241, 0.42),
+    0 0 24px rgba(0, 199, 241, 0.32);
 }
 
-.recipe-item__copy-btn:hover {
-  color: var(--color-text-on-light);
-  background-color: var(--color-border-cta);
+.recipe-item__copy-state-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1;
 }
 
-.recipe-item__copy-btn:focus-visible {
+.recipe-item__copy-state-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-cta);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-eurovision-cyan);
+}
+
+.recipe-item__copy-state-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-cta);
+  color: rgba(255, 255, 255, 0.92);
+  /* Truncate long dish names to keep the toast tidy. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe-item__copy-state-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-eurovision-cyan) 0%,
+    var(--color-eurovision-pink) 100%
+  );
+  transform-origin: left center;
+  animation: recipe-item-copy-toast-progress 2000ms linear forwards;
+}
+
+/* Exit phase — mirrors the entry animation (fades out + slides down + scales). */
+.recipe-item__copy-state--leaving {
+  animation: recipe-item-copy-toast-out 220ms var(--easing-standard) forwards;
+}
+
+.recipe-item__title {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(24, 24, 24, 0.1);
+  border-radius: var(--radius-md);
+  background-color: rgba(255, 255, 255, 0.62);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--easing-standard),
+    border-color 160ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
+}
+
+.recipe-item__title-heading {
+  margin: 0;
+  width: 100%;
+}
+
+.recipe-item__title:hover {
+  background-color: rgba(255, 255, 255, 0.86);
+  border-color: rgba(0, 101, 180, 0.26);
+}
+
+.recipe-item__title:active {
+  transform: scale(0.99);
+}
+
+.recipe-item__title:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring-on-light);
   outline-offset: var(--focus-ring-offset);
 }
 
 .recipe-item__title-text {
-  margin: 0;
+  display: block;
+  min-width: 0;
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-cta);
+  text-decoration: none;
+}
+
+.recipe-item__title:hover .recipe-item__title-text {
+  color: var(--color-eurovision-blue);
+}
+
+.recipe-item__title-copy-icon {
+  flex-shrink: 0;
+  color: rgba(24, 24, 24, 0.42);
+  transition:
+    color 160ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
+}
+
+.recipe-item__title:hover .recipe-item__title-copy-icon {
+  color: var(--color-eurovision-blue);
+}
+
+.recipe-item__title:active .recipe-item__title-copy-icon {
+  transform: scale(0.94);
 }
 
 .recipe-item__title-icon {
@@ -70,17 +240,74 @@
 }
 
 .recipe-item__cta-link {
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  align-self: flex-start;
   margin-top: auto;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgba(24, 24, 24, 0.16);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-on-light);
+  color: var(--color-text-on-light);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-cta);
   text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--easing-standard),
+    border-color 160ms var(--easing-standard),
+    transform var(--duration-press) var(--easing-standard);
 }
 
-.recipe-item__cta-link > .cta-button {
-  flex: 1;
+.recipe-item__cta-link:hover {
+  background-color: rgba(24, 24, 24, 0.06);
+  border-color: rgba(24, 24, 24, 0.24);
+}
+
+.recipe-item__cta-link:active {
+  transform: scale(0.98);
 }
 
 .recipe-item__cta-link:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring-on-light);
   outline-offset: var(--focus-ring-offset);
   border-radius: var(--radius-md);
+}
+
+@keyframes recipe-item-copy-toast-in {
+  from {
+    opacity: 0;
+    /* Stays centered horizontally; only Y-offset + scale animate. */
+    transform: translateX(-50%) translateY(0.75rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes recipe-item-copy-toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0.5rem) scale(0.96);
+  }
+}
+
+@keyframes recipe-item-copy-toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }

@@ -1,19 +1,27 @@
 .section-leaderboard {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-block: var(--space-10);
   padding-inline: var(--grid-margin);
+  background-color: #050d32;
 }
 
 @media (max-width: 48rem) {
   .section-leaderboard {
+    min-height: 100dvh;
     padding-block: var(--space-6);
   }
 }
 
 .section-leaderboard__inner {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-8);
   width: 100%;
+  max-width: var(--grid-content-max);
+  margin-inline: auto;
 }
 
 .section-leaderboard__countries {
@@ -63,6 +71,7 @@
 
   .section-leaderboard__inner {
     flex-direction: column-reverse;
+    align-items: stretch;
     gap: var(--space-6);
   }
 
@@ -89,13 +98,45 @@
 }
 
 @media (max-width: 48rem) {
+  /* center content vertically, flag grid at natural 3:2 size */
+  .section-leaderboard {
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .section-leaderboard__inner {
+    flex-direction: column-reverse; /* moments visible at top, countries below */
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .section-leaderboard__right {
+    flex: 0 0 auto;
+    height: auto;
+    width: 100%;
+  }
+
+  /* 5 columns — rows auto-sized by the 3:2 aspect-ratio on country-item */
   .section-leaderboard__countries {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* icon-only moments row — no horizontal overscroll */
+  .section-leaderboard__moments {
+    flex-direction: row;
+    overflow-x: visible;
+    gap: var(--space-2);
+  }
+
+  .section-leaderboard__moments > * {
+    flex: 1 1 0;
+    min-width: 0;
   }
 }
 
 @media (max-width: 30rem) {
   .section-leaderboard__countries {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }

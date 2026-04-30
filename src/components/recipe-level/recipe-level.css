@@ -33,8 +33,3 @@
   line-height: var(--line-height-cta);
 }
 
-.recipe-level__details {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-}

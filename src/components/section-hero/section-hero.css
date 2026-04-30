@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
+  min-height: 103svh;
   background:
     linear-gradient(145deg, #001b8f 0%, #06175d 46%, #020719 100%);
   overflow: hidden;
@@ -11,16 +11,42 @@
 
 .section-hero__gradient {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  top: -8%;
+  right: -8%;
+  bottom: -8%;
+  left: -8%;
   background-image:
     radial-gradient(80% 74% at -12% 52%, rgba(224, 35, 122, 0.72) 0%, rgba(224, 35, 122, 0.32) 36%, transparent 66%),
     radial-gradient(74% 68% at 112% 48%, rgba(0, 199, 241, 0.46) 0%, rgba(10, 35, 190, 0.28) 42%, transparent 72%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 42%, rgba(0, 0, 0, 0.16) 100%);
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
+  animation: hero-orbs-drift 11s var(--easing-standard) infinite;
+}
+
+@keyframes hero-orbs-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(1.5%, -1.2%, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(-1%, 1.6%, 0) scale(1.02);
+  }
+  75% {
+    transform: translate3d(-1.6%, -0.8%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-hero__gradient {
+    animation: none;
+  }
 }
 
 .section-hero::after {
@@ -97,15 +123,26 @@
 }
 
 .section-hero__control-row {
-  display: grid;
-  grid-template-columns: minmax(18rem, 1fr) 4.25rem;
+  display: flex;
   align-items: stretch;
-  gap: var(--space-3);
+  gap: var(--space-2);
   width: 100%;
+}
+
+.section-hero__actions {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.section-hero__primary-cta--mobile {
+  display: none;
 }
 
 .section-hero__input-shell {
   --hero-input-placeholder-color: rgba(24, 24, 24, 0.46);
+  flex: 1;
   display: flex;
   align-items: center;
   min-width: 0;
@@ -122,8 +159,16 @@
 }
 
 .section-hero__input-shell--register {
-  background-color: rgba(255, 255, 255, 0.72);
+  background-color: rgb(255, 255, 255);
   color: var(--color-text-on-light);
+}
+
+.section-hero__input-shell--register:hover:not(:focus-within) {
+  background-color: rgb(232, 232, 232);
+}
+
+.section-hero__input-shell--retrieve:hover:not(:focus-within) {
+  background-color: rgba(255, 255, 255, 0.13);
 }
 
 .section-hero__input-shell--error {
@@ -200,7 +245,7 @@
   gap: var(--space-3);
   min-width: 0;
   height: 100%;
-  padding-inline: var(--space-3);
+  padding-inline: var(--space-3) var(--space-5);
   border: 0;
   background: transparent;
   font-family: var(--font-family-mono);
@@ -212,7 +257,7 @@
   font-variant-numeric: tabular-nums;
   text-align: left;
   cursor: pointer;
-  border-radius: calc(var(--radius-md) - var(--space-2));
+  border-radius: calc(var(--radius-lg) - var(--space-2));
   transition:
     background-color 160ms var(--easing-standard),
     color 160ms var(--easing-standard);
@@ -317,14 +362,12 @@
 }
 
 .section-hero__primary-cta:not(:disabled):hover {
-  transform: translateY(-0.5px);
+  transform: translateY(0);
 }
 
 .section-hero__primary-cta:not(:disabled):hover .cta-button__bevel {
   border-color: color-mix(in srgb, var(--hero-cta-stroke) 70%, white);
-  box-shadow:
-    0 0 0 1px var(--hero-cta-glow),
-    0 0 32px var(--hero-cta-glow);
+  box-shadow: none;
 }
 
 .section-hero__primary-cta:not(:disabled):hover .cta-button__inner {
@@ -333,7 +376,7 @@
 }
 
 .section-hero__primary-cta:not(:disabled):active {
-  transform: translateY(0.5px) scale(0.99);
+  transform: scale(0.99);
 }
 
 .section-hero__primary-cta:not(:disabled):active .cta-button__inner {
@@ -359,7 +402,7 @@
 
 .section-hero__primary-cta--register {
   --hero-cta-bg: rgba(14, 14, 18, 0.78);
-  --hero-cta-bg-hover: rgba(25, 25, 31, 0.88);
+  --hero-cta-bg-hover: rgba(11, 11, 13, 0.88);
   --hero-cta-bg-active: rgba(8, 8, 12, 0.92);
 }
 
@@ -373,7 +416,7 @@
   min-height: calc(var(--font-size-xs) * var(--line-height-cta));
   font-size: var(--font-size-xs);
   font-style: italic;
-  color: #ff8bc4;
+  color: #14e94d;
   line-height: var(--line-height-cta);
   padding-left: var(--space-1);
 }
@@ -397,7 +440,7 @@
 }
 
 .section-hero__retrieve-wrapper .cta-button__bevel {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 0;
   background-color: rgba(255, 255, 255, 0.04);
 }
 
@@ -407,6 +450,9 @@
   color: var(--color-text-on-dark);
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
   backdrop-filter: blur(14px);
+  transition:
+    background-color 180ms var(--easing-standard),
+    box-shadow 180ms var(--easing-standard);
 }
 
 .section-hero__retrieve-wrapper .cta-button__icon > svg {
@@ -415,22 +461,23 @@
 }
 
 .section-hero__retrieve-wrapper .cta-button:not(:disabled):hover {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .section-hero__retrieve-wrapper .cta-button:not(:disabled):hover .cta-button__bevel {
-  border-color: rgba(255, 255, 255, 0.34);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 28px rgba(0, 199, 241, 0.14);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .section-hero__retrieve-wrapper .cta-button:not(:disabled):hover .cta-button__inner {
+  /* Keep size fixed — prevents the icon-only base-hover expand (margin/width/height) */
+  margin: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
   background-color: rgba(255, 255, 255, 0.16);
 }
 
 .section-hero__retrieve-wrapper .cta-button:not(:disabled):active {
-  transform: translateY(1px) scale(0.99);
+  transform: scale(0.99);
 }
 
 .section-hero__retrieve-wrapper .cta-button:not(:disabled):active .cta-button__inner {
@@ -490,6 +537,7 @@
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-body);
   color: var(--color-text-on-dark);
+  opacity: 0.8;
   align-self: stretch;
   min-width: 0;
   max-width: 39.625rem; /* 634px */
@@ -510,6 +558,7 @@
 
   .section-hero__flow {
     align-items: stretch;
+    gap: var(--space-5);
   }
 
   .section-hero__field-copy {
@@ -517,12 +566,13 @@
     text-align: center;
   }
 
-  .section-hero__control-row {
-    grid-template-columns: 1fr 3.25rem;
+  .section-hero__title {
+    letter-spacing: -2px;
   }
 
   .section-hero__input-shell {
     width: 100%;
+    flex: none; /* column layout — disable flex-grow so height: 4.25rem applies directly */
   }
 
   .section-hero__primary-cta {
@@ -531,6 +581,37 @@
 
   .section-hero__retrieve-wrapper {
     width: 3.25rem;
+  }
+
+  /* reserve 2 lines so the hint appearing doesn't shift the vertically-centred layout */
+  .section-hero__code-hint {
+    min-height: calc(var(--font-size-xs) * var(--line-height-cta) * 2);
+  }
+
+  /* buttons below the field on mobile */
+  .section-hero__control-row {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .section-hero__actions {
+    width: 100%;
+  }
+
+  /* swap CTAs: hide desktop copy, show mobile copy */
+  .section-hero__primary-cta--desktop {
+    display: none;
+  }
+
+  .section-hero__primary-cta--mobile {
+    display: flex;
+    flex: 1;
+    height: 3.25rem;
+    min-width: 0;
+  }
+
+  .section-hero__primary-cta--mobile .cta-button__inner {
+    padding-inline: var(--space-3);
   }
 }
 
@@ -542,14 +623,11 @@
 
   .section-hero__title {
     font-size: 2.25rem;
+    letter-spacing: -1px;
   }
 
   .section-hero__body,
   .section-hero__input {
     font-size: var(--font-size-sm);
-  }
-
-  .section-hero__primary-cta .cta-button__inner {
-    padding-inline: var(--space-3);
   }
 }

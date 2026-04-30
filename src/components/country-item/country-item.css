@@ -4,16 +4,31 @@
   width: 100%;
   height: 3.5rem; /* 56px */
   overflow: hidden;
+  gap: 4px;
 }
 
 .country-item__name {
   flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
-  background-color: var(--color-eurovision-blue);
   color: var(--color-text-on-dark);
-  transition: background-color 240ms var(--easing-standard), transform 240ms var(--easing-standard);
+  transition:
+    color 240ms var(--easing-standard),
+    box-shadow 240ms var(--easing-standard);
+}
+
+/* background layer — scaled independently from the text */
+.country-item__name::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-eurovision-blue);
+  z-index: 0;
+  transition:
+    background-color 240ms var(--easing-standard),
+    transform 240ms var(--easing-standard);
 }
 
 .country-item__name-text {
@@ -22,6 +37,8 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-cta);
+  position: relative;
+  z-index: 1;
 }
 
 .country-item__check {
@@ -33,22 +50,65 @@
   background-color: var(--color-eurovision-blue);
   color: var(--color-text-on-dark);
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* === State: spinning === */
 .country-item--spinning .country-item__name {
-  outline: 2px solid var(--color-eurovision-cyan);
-  outline-offset: -2px;
-  transform: scale(1.04);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 24px rgba(233, 58, 25, 0.42);
+  transition: none;
+}
+
+.country-item--spinning .country-item__name::before {
+  background-color: #e93a19;
+  transform: scale(1.02);
+  transition: none;
 }
 
 /* === State: selected === */
 .country-item--selected .country-item__name {
-  background-color: var(--color-bg-on-light);
   color: var(--color-text-on-light);
+}
+
+.country-item--selected .country-item__name::before {
+  background-color: var(--color-bg-on-light);
 }
 
 /* === State: used (other guest already drew it) === */
 .country-item--used {
   opacity: 1;
+}
+
+/* === Mobile: flag-only, strict 3:2 ratio === */
+@media (max-width: 48rem) {
+  .country-item {
+    height: auto;
+    aspect-ratio: 3/2;
+  }
+
+  .country-item__name {
+    display: none;
+  }
+
+  .country-item .flag {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .country-item .flag__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .country-item--spinning {
+    box-shadow: 0 0 0 2px #e93a19, 0 0 18px rgba(233, 58, 25, 0.55);
+  }
+
+  .country-item--selected {
+    box-shadow: 0 0 0 2px white;
+  }
 }

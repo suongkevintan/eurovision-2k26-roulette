@@ -1,6 +1,6 @@
 :root {
   /* === Surfaces === */
-  --color-bg-primary: #050b30;
+  --color-bg-primary: #001b8f;
   --color-bg-elevated: #0a1240;
   --color-bg-on-light: #fefefe;
   --color-bg-input-light: #fefefe;
@@ -25,7 +25,7 @@
   /* === Focus rings (WCAG 2.4.7 + 2.4.13) === */
   --color-focus-ring-on-light: var(--color-eurovision-blue);
   --color-focus-ring-on-dark: var(--color-eurovision-cyan);
-  --focus-ring-width: 3px;
+  --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 
   /* === Effects === */
@@ -58,8 +58,8 @@
   --line-height-normal: 1.5;
   --line-height-cta: 1.4;
 
-  --letter-spacing-h1: -0.05em;
-  --letter-spacing-body: -0.02em;
+  --letter-spacing-h1: -4px;
+  --letter-spacing-body: -0.55px;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;

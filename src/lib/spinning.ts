@@ -20,10 +20,6 @@ export function generateSpinTicks(itemCount: number, totalMs = 5000): SpinTick[]
   return ticks;
 }
 
-export function pickFinalIndex(itemCount: number): number {
-  return Math.floor(Math.random() * itemCount);
-}
-
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;

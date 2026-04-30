@@ -8,10 +8,9 @@ const difficultyMeta: Record<Difficulty, { stars: number; label: string }> = {
 
 type RecipeLevelProps = {
   difficulty: Difficulty;
-  count: number;
 };
 
-export function RecipeLevel({ difficulty, count }: RecipeLevelProps) {
+export function RecipeLevel({ difficulty }: RecipeLevelProps) {
   const meta = difficultyMeta[difficulty];
   return (
     <div className={"recipe-level"}>
@@ -23,7 +22,6 @@ export function RecipeLevel({ difficulty, count }: RecipeLevelProps) {
         ))}
       </div>
       <span className={"recipe-level__label"}>{meta.label}</span>
-      <span className={"recipe-level__details"}>{count} recette{count > 1 ? "s" : ""}</span>
     </div>
   );
 }

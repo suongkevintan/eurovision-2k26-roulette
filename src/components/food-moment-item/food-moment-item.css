@@ -23,7 +23,10 @@
   align-items: center;
   background-color: var(--color-eurovision-blue);
   color: var(--color-text-on-dark);
-  transition: background-color 240ms var(--easing-standard), transform 240ms var(--easing-standard);
+  transition:
+    background-color 240ms var(--easing-standard),
+    box-shadow 240ms var(--easing-standard),
+    transform 240ms var(--easing-standard);
 }
 
 .food-moment-item__name-text {
@@ -47,13 +50,38 @@
 
 /* === State: spinning === */
 .food-moment-item--spinning .food-moment-item__name {
-  outline: 2px solid var(--color-eurovision-cyan);
-  outline-offset: -2px;
-  transform: scale(1.04);
+  background-color: #e93a19;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 22px rgba(233, 58, 25, 0.42);
+  transition: none;
+  transform: scale(1.02);
 }
 
 /* === State: selected === */
 .food-moment-item--selected .food-moment-item__name {
   background-color: var(--color-bg-on-light);
   color: var(--color-text-on-light);
+}
+
+/* === Mobile: icon-only (no label, no overscroll) === */
+@media (max-width: 48rem) {
+  .food-moment-item__name {
+    display: none;
+  }
+
+  .food-moment-item__icon {
+    width: 100%;
+  }
+
+  .food-moment-item--spinning .food-moment-item__icon {
+    background-color: #e93a19;
+    box-shadow: 0 0 22px rgba(233, 58, 25, 0.42);
+    transition: none;
+  }
+
+  .food-moment-item--selected .food-moment-item__icon {
+    background-color: var(--color-bg-on-light);
+    color: var(--color-text-on-light);
+  }
 }
