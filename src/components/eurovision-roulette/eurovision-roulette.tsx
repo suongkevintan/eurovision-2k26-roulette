@@ -55,12 +55,7 @@ export function EurovisionRoulette() {
     if (typeof window === "undefined") return;
     const id = window.setInterval(() => {
       loadState().then((loaded) => {
-        setState((prev) => {
-          const existingIds = new Set(prev.guests.map((g) => g.id));
-          const incoming = loaded.guests.filter((g) => !existingIds.has(g.id));
-          if (!incoming.length) return prev;
-          return { ...prev, guests: [...prev.guests, ...incoming] };
-        });
+        setState((prev) => ({ ...loaded, revealDraws: prev.revealDraws }));
       });
     }, 15000);
     return () => window.clearInterval(id);
