@@ -3,7 +3,7 @@ import type { DinnerSlot, Guest } from "./types";
 
 const slotOrder: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
-export function makeCode(name: string) {
+export function makeCode(name: string, pin: string) {
   const stem = name
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -11,7 +11,7 @@ export function makeCode(name: string) {
     .slice(0, 3)
     .toUpperCase()
     .padEnd(3, "X");
-  return `${stem}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+  return `${stem}-${pin.toUpperCase()}`;
 }
 
 export function expectedDistribution(total: number): Record<DinnerSlot, number> {
@@ -49,11 +49,11 @@ export function pickCountry(guests: Guest[]) {
   return pool[Math.floor(Math.random() * pool.length)].code;
 }
 
-export function createGuest(name: string, guests: Guest[]) {
+export function createGuest(name: string, pin: string, guests: Guest[]) {
   return {
     id: crypto.randomUUID(),
     name,
-    code: makeCode(name),
+    code: makeCode(name, pin),
     dinnerSlot: pickDinnerSlot(guests, guests.length + 1),
     countryCode: pickCountry(guests),
     shoppingDone: false,

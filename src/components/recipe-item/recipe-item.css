@@ -204,6 +204,7 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-cta);
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .recipe-item__title:hover .recipe-item__title-text {

@@ -5,7 +5,7 @@ import { ArrowDownRight, CloudDownload, Copy, KeyRound, RotateCcw, Ticket } from
 import { CtaButton } from "@/components/cta-button/cta-button";
 import { Header } from "@/components/header/header";
 
-type Phase = "idle" | "code_shown" | "spinning" | "revealed";
+type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
 type Mode = "register" | "retrieve";
 
 const SCRAMBLE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -17,6 +17,8 @@ type SectionHeroProps = {
   phase: Phase;
   activeCode: string | null;
   onRegister: (name: string) => void;
+  onPinSubmit: (pin: string) => boolean;
+  onCancelPinEntry: () => void;
   onLaunch: () => void;
   onRetrieve: (code: string) => boolean;
   onOpenAdmin?: () => void;
@@ -95,14 +97,18 @@ export function SectionHero({
   phase,
   activeCode,
   onRegister,
+  onPinSubmit,
+  onCancelPinEntry,
   onLaunch,
   onRetrieve,
   onOpenAdmin
 }: SectionHeroProps) {
   const [name, setName] = useState("");
+  const [pin, setPin] = useState("");
   const [retrieveCode, setRetrieveCode] = useState("");
   const [mode, setMode] = useState<Mode>("register");
   const [nameError, setNameError] = useState("");
+  const [pinError, setPinError] = useState("");
   const [retrieveError, setRetrieveError] = useState("");
   const [codeCopied, setCodeCopied] = useState(false);
   const [adminRevealed, setAdminRevealed] = useState(false);
@@ -151,29 +157,36 @@ export function SectionHero({
 
   const disabled = phase === "spinning";
   const isRetrieveMode = mode === "retrieve";
-  const codeVisible = !isRetrieveMode && Boolean(activeCode) && phase !== "idle";
+  const isPinEntry = !isRetrieveMode && phase === "pin_entry";
+  const codeVisible = !isRetrieveMode && Boolean(activeCode) && phase !== "idle" && phase !== "pin_entry";
   const canLaunchFromCode = Boolean(activeCode) && phase === "code_shown";
-  const inputId = isRetrieveMode ? "retrieve-code" : "inscription-name";
+  const inputId = isPinEntry ? "inscription-pin" : isRetrieveMode ? "retrieve-code" : "inscription-name";
   const labelId = `${inputId}-label`;
   const helperId = `${inputId}-helper`;
   const primaryLabel = isRetrieveMode
     ? "Récupérer le tirage"
-    : canLaunchFromCode
-      ? "Lancer la roulette"
-      : codeVisible
-        ? phase === "spinning"
-          ? "Tirage en cours"
-          : "Code enregistré"
-      : "S'enregistrer";
+    : isPinEntry
+      ? "Valider le code PIN"
+      : canLaunchFromCode
+        ? "Lancer la roulette"
+        : codeVisible
+          ? phase === "spinning"
+            ? "Tirage en cours"
+            : "Code enregistré"
+          : "S'enregistrer";
   const primaryState = isRetrieveMode ? "retrieve" : codeVisible ? "code" : "register";
   const codeHint = codeVisible
     ? "Voici le code pour retrouver votre tirage au sort. Notez-le bien !"
     : isRetrieveMode
       ? "Collez votre code pour reprendre un tirage déjà enregistré."
-      : "";
-  const helperText = isRetrieveMode
-    ? retrieveError || "Entrez votre code pour retrouver votre tirage au sort"
-    : nameError || "Inscrivez-vous pour obtenir votre tirage au sort";
+      : isPinEntry
+        ? "Votre PIN sera combiné à votre prénom pour former votre code de récupération."
+        : "";
+  const helperText = isPinEntry
+    ? pinError || "Choisissez un code PIN à 4 chiffres pour retrouver votre tirage"
+    : isRetrieveMode
+      ? retrieveError || "Entrez votre code pour retrouver votre tirage au sort"
+      : nameError || "Inscrivez-vous pour obtenir votre tirage au sort";
 
   useEffect(() => {
     setCodeCopied(false);
@@ -189,11 +202,22 @@ export function SectionHero({
 
   function handleRegisterSubmit(event: FormEvent) {
     event.preventDefault();
-    if (canLaunchFromCode) {
-      onLaunch();
+    if (canLaunchFromCode) { onLaunch(); return; }
+    if (codeVisible) return;
+    if (isPinEntry) {
+      if (pin.length !== 4) {
+        setPinError("Le code PIN doit contenir exactement 4 chiffres.");
+        return;
+      }
+      const success = onPinSubmit(pin);
+      if (!success) {
+        setPinError("Ce code est déjà utilisé. Choisissez un autre PIN.");
+        return;
+      }
+      setPin("");
+      setPinError("");
       return;
     }
-    if (codeVisible) return;
     const trimmed = name.trim();
     if (disabled) return;
     if (!trimmed) {
@@ -267,12 +291,12 @@ export function SectionHero({
               htmlFor={codeVisible ? undefined : inputId}
               className="section-hero__input-label"
             >
-              {isRetrieveMode ? "Code de tirage" : "Prénom"}
+              {isPinEntry ? "Code PIN" : isRetrieveMode ? "Code de tirage" : "Prénom"}
             </label>
             <p
               id={helperId}
               className={`section-hero__input-helper${
-                (nameError && !isRetrieveMode) || (retrieveError && isRetrieveMode)
+                (nameError && !isRetrieveMode && !isPinEntry) || (pinError && isPinEntry) || (retrieveError && isRetrieveMode)
                   ? " section-hero__input-helper--error"
                   : ""
               }`}
@@ -284,7 +308,7 @@ export function SectionHero({
           <div className="section-hero__control-row">
             <div
               className={`section-hero__input-shell section-hero__input-shell--${primaryState}${
-                (nameError && !isRetrieveMode) || (retrieveError && isRetrieveMode) ? " section-hero__input-shell--error" : ""
+                (nameError && !isRetrieveMode && !isPinEntry) || (pinError && isPinEntry) || (retrieveError && isRetrieveMode) ? " section-hero__input-shell--error" : ""
               }`}
             >
               {codeVisible && activeCode ? (
@@ -301,6 +325,25 @@ export function SectionHero({
                     {codeCopied ? "Copié" : "Copier"}
                   </span>
                 </button>
+              ) : isPinEntry ? (
+                <input
+                  id={inputId}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={4}
+                  autoComplete="off"
+                  placeholder="0000"
+                  className="section-hero__input section-hero__input--mono"
+                  value={pin}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                    setPin(val);
+                    if (pinError) setPinError("");
+                  }}
+                  disabled={disabled}
+                  aria-invalid={Boolean(pinError)}
+                  aria-describedby={helperId}
+                />
               ) : (
                 <input
                   id={inputId}
@@ -332,8 +375,8 @@ export function SectionHero({
                 aria-hidden={true}
                 tabIndex={-1}
                 className={`section-hero__primary-cta section-hero__primary-cta--${primaryState} section-hero__primary-cta--desktop`}
-                icon={isRetrieveMode ? <CloudDownload /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
-                disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : codeVisible && !canLaunchFromCode)}
+                icon={isRetrieveMode ? <CloudDownload /> : isPinEntry ? <KeyRound /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
+                disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : isPinEntry ? pin.length !== 4 : codeVisible && !canLaunchFromCode)}
               >
                 {primaryLabel}
               </CtaButton>
@@ -346,8 +389,8 @@ export function SectionHero({
                 surface="dark"
                 type="submit"
                 className={`section-hero__primary-cta section-hero__primary-cta--${primaryState} section-hero__primary-cta--mobile`}
-                icon={isRetrieveMode ? <CloudDownload /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
-                disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : codeVisible && !canLaunchFromCode)}
+                icon={isRetrieveMode ? <CloudDownload /> : isPinEntry ? <KeyRound /> : codeVisible ? <Ticket /> : <ArrowDownRight />}
+                disabled={disabled || (isRetrieveMode ? !retrieveCode.trim() : isPinEntry ? pin.length !== 4 : codeVisible && !canLaunchFromCode)}
               >
                 {primaryLabel}
               </CtaButton>
@@ -363,6 +406,9 @@ export function SectionHero({
                     setNameError("");
                     setRetrieveError("");
                     setRetrieveCode("");
+                    setPin("");
+                    setPinError("");
+                    if (isPinEntry) onCancelPinEntry();
                     setMode(isRetrieveMode ? "register" : "retrieve");
                   }}
                   disabled={disabled}

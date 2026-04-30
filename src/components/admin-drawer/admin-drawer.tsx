@@ -26,7 +26,7 @@ function noiseLike(source: string) {
  * length so the row layout doesn't reflow when admin flips the reveal switch.
  */
 function ScrambledDraw({ text, revealed }: { text: string; revealed: boolean }) {
-  const [display, setDisplay] = useState(() => (revealed ? text : noiseLike(text)));
+  const [display, setDisplay] = useState(text);
 
   useEffect(() => {
     if (revealed) {

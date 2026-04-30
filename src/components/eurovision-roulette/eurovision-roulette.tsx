@@ -8,12 +8,12 @@ import { SectionHero } from "@/components/section-hero/section-hero";
 import { SectionLeaderboard } from "@/components/section-leaderboard/section-leaderboard";
 import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs-bottom";
 import { countries, dinnerSlots } from "@/lib/data";
-import { createGuest, pickCountry, pickDinnerSlot } from "@/lib/roulette";
+import { createGuest, makeCode, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
 import { loadState, persistState, saveGuestToRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
-type Phase = "idle" | "code_shown" | "spinning" | "revealed";
+type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 function scrollIntoLeaderboard() {
@@ -28,6 +28,7 @@ function scrollIntoLeaderboard() {
 export function EurovisionRoulette() {
   const [state, setState] = useState<RouletteState>({ revealDraws: false, guests: [] });
   const [activeCode, setActiveCode] = useState<string | null>(null);
+  const [pendingName, setPendingName] = useState<string | null>(null);
   const [pendingGuest, setPendingGuest] = useState<Guest | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
@@ -62,7 +63,7 @@ export function EurovisionRoulette() {
   }, []);
 
   useEffect(() => {
-    const locked = phase === "idle" || phase === "code_shown";
+    const locked = phase === "idle" || phase === "pin_entry" || phase === "code_shown";
     document.body.style.overflow = locked ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [phase]);
@@ -136,11 +137,26 @@ export function EurovisionRoulette() {
 
   function handleRegister(name: string) {
     if (phase === "spinning") return;
-    const guest = createGuest(name, state.guests);
+    setPendingName(name);
+    setPhase("pin_entry");
+  }
+
+  function handlePinSubmit(pin: string): boolean {
+    if (!pendingName || phase !== "pin_entry") return false;
+    const code = makeCode(pendingName, pin);
+    if (state.guests.some((g) => g.code.toUpperCase() === code.toUpperCase())) return false;
+    const guest = createGuest(pendingName, pin, state.guests);
+    setPendingName(null);
     setPendingGuest(guest);
     setActiveCode(guest.code);
     setPhase("code_shown");
     saveGuestToRemote(guest).catch(() => undefined);
+    return true;
+  }
+
+  function handleCancelPinEntry() {
+    setPendingName(null);
+    setPhase("idle");
   }
 
   function handleLaunchSpin() {
@@ -212,6 +228,8 @@ function handleToggleReveal() {
         phase={phase}
         activeCode={activeCode}
         onRegister={handleRegister}
+        onPinSubmit={handlePinSubmit}
+        onCancelPinEntry={handleCancelPinEntry}
         onLaunch={handleLaunchSpin}
         onRetrieve={handleRetrieve}
         onOpenAdmin={handleOpenAdmin}

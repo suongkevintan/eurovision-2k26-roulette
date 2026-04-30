@@ -88,12 +88,16 @@
     flex-direction: row;
     overflow-x: auto;
     gap: var(--space-3);
+    scrollbar-width: none;
+  }
+
+  .section-leaderboard__moments::-webkit-scrollbar {
+    display: none;
   }
 
   .section-leaderboard__moments > * {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 12rem;
+    flex: 1 1 8rem;
+    min-width: 0;
   }
 }
 
