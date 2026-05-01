@@ -37,18 +37,43 @@ export function EurovisionRoulette() {
   const [spinningSlot, setSpinningSlot] = useState<DinnerSlot | null>(null);
   const [liveMessage, setLiveMessage] = useState("");
   const timeouts = useRef<number[]>([]);
+  // Gate: don't persist until the first remote load has completed — avoids
+  // overwriting localStorage with the empty initial state before Supabase replies.
+  const hasLoaded = useRef(false);
 
   useEffect(() => {
-    // Force the reveal toggle off on every page load — masking the draws is the
-    // default, even if a previous session persisted reveal_draws = true.
-    loadState().then((loaded) => setState({ ...loaded, revealDraws: false }));
+    const syncFromRemote = (resetReveal = false) => {
+      loadState().then((loaded) => {
+        hasLoaded.current = true;
+        setState((prev) => ({
+          ...loaded,
+          revealDraws: resetReveal ? false : prev.revealDraws,
+        }));
+      });
+    };
+
+    // Initial load — force reveal off (design intent: always start masked).
+    syncFromRemote(true);
+
+    // Re-fetch whenever the tab regains focus or becomes visible: covers the
+    // case where another device registered while this tab was in the background.
+    const onVisibility = () => { if (!document.hidden) syncFromRemote(); };
+    const onFocus = () => syncFromRemote();
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", onFocus);
+
     const ids = timeouts.current;
     return () => {
       ids.forEach((id) => window.clearTimeout(id));
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("focus", onFocus);
     };
   }, []);
 
   useEffect(() => {
+    // Skip the very first effect run (before the remote load lands) to avoid
+    // overwriting Supabase/localStorage with the empty bootstrap state.
+    if (!hasLoaded.current) return;
     persistState(state).catch(() => undefined);
   }, [state]);
 
@@ -58,7 +83,7 @@ export function EurovisionRoulette() {
       loadState().then((loaded) => {
         setState((prev) => ({ ...loaded, revealDraws: prev.revealDraws }));
       });
-    }, 15000);
+    }, 5000);
     return () => window.clearInterval(id);
   }, []);
 
