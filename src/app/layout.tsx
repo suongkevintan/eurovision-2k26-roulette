@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Agentation } from "agentation";
 import "./globals.css";
@@ -18,6 +18,10 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
   preload: false
 });
+
+export const viewport: Viewport = {
+  themeColor: "#ff0000",
+};
 
 export const metadata: Metadata = {
   title: "Eurovision Roulette",
@@ -39,6 +43,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#ff0000" />
+      </head>
       <body suppressHydrationWarning>
         {children}
         {process.env.NODE_ENV === "development" && <Agentation endpoint="http://localhost:4747" />}

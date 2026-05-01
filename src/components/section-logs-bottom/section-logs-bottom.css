@@ -47,4 +47,10 @@
   .section-logs-bottom {
     padding-block: var(--space-6);
   }
+
+  .section-logs-bottom--spinning {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
 }

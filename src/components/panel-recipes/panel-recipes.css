@@ -66,7 +66,7 @@
   margin: 0;
   font-size: clamp(var(--font-size-xs), 0.75rem + 0.4vw, var(--font-size-sm));
   color: var(--color-text-muted);
-  line-height: var(--line-height-cta);
+  line-height: var(--line-height-normal);
 }
 
 .panel-recipes__placeholder {
@@ -92,5 +92,12 @@
 @media (max-width: 64rem) {
   .panel-recipes__items {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 30rem) {
+  .panel-recipes__header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

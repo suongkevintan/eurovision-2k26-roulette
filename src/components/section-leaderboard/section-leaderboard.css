@@ -13,6 +13,12 @@
     min-height: 100dvh;
     padding-block: var(--space-6);
   }
+
+  .section-leaderboard--locked {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
 }
 
 .section-leaderboard__inner {

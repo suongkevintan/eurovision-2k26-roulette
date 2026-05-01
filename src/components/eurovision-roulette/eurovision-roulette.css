@@ -13,22 +13,6 @@
   object-fit: cover;
 }
 
-.eurovision-roulette__no-db {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  background: #7f1d1d;
-  color: #fef2f2;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  max-width: 90vw;
-  text-align: center;
-  pointer-events: none;
-}
 
 .eurovision-roulette__live {
   position: absolute;

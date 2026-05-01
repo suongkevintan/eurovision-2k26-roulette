@@ -23,6 +23,7 @@ type SectionLeaderboardProps = {
   selectedSlot: DinnerSlot | null;
   spinningSlot: DinnerSlot | null;
   gif?: ReactNode;
+  locked?: boolean;
 };
 
 export function SectionLeaderboard({
@@ -32,12 +33,13 @@ export function SectionLeaderboard({
   usedCountryCodes,
   selectedSlot,
   spinningSlot,
-  gif
+  gif,
+  locked
 }: SectionLeaderboardProps) {
   return (
     <section
       id="section-leaderboard"
-      className={"section-leaderboard"}
+      className={`section-leaderboard${locked ? " section-leaderboard--locked" : ""}`}
       aria-label="Tableau des pays et moments du dîner"
     >
       <div className={"section-leaderboard__inner"}>

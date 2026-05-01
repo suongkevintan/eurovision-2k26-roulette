@@ -145,6 +145,6 @@
 
 @media (max-width: 30rem) {
   .header__incentive {
-    max-width: 10.5rem;
+    white-space: nowrap;
   }
 }

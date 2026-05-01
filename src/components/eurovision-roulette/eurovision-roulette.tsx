@@ -10,7 +10,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, makeCode, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { hasSupabase, loadState, persistLocalState, saveGuestToRemote, updateGuestInRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
+import { loadState, persistLocalState, saveGuestToRemote, updateGuestInRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
 type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
@@ -256,11 +256,6 @@ function handleToggleReveal() {
 
   return (
     <main className={"eurovision-roulette"}>
-      {!hasSupabase && (
-        <div className={"eurovision-roulette__no-db"} role="alert">
-          ⚠️ Supabase non configuré — les inscriptions ne sont pas synchronisées entre appareils. Ajoutez les variables d&apos;environnement en production.
-        </div>
-      )}
       <SectionHero
         participantCount={state.guests.length}
         phase={phase}
@@ -274,6 +269,7 @@ function handleToggleReveal() {
       />
       <SectionLeaderboard
         countries={countries}
+        locked={phase === "idle" || phase === "pin_entry" || phase === "code_shown"}
         selectedCountryCode={phase === "revealed" ? activeGuest?.countryCode ?? null : null}
         spinningCountryCode={phase === "spinning" ? spinningCountryCode : null}
         usedCountryCodes={usedCountryCodes}
@@ -285,6 +281,7 @@ function handleToggleReveal() {
         }
       />
       <SectionLogsBottom
+        spinning={phase === "spinning"}
         result={
           <PanelResult
             country={phase === "revealed" ? activeCountry : null}
