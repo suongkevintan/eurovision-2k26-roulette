@@ -10,7 +10,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, makeCode, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { loadState, persistLocalState, saveGuestToRemote, updateGuestInRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
+import { hasSupabase, loadState, persistLocalState, saveGuestToRemote, updateGuestInRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
 type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
@@ -147,7 +147,12 @@ export function EurovisionRoulette() {
       const completeId = window.setTimeout(() => {
         setSpinningCountryCode(null);
         setSpinningSlot(null);
-        setState((prev) => ({ ...prev, guests: [...prev.guests, guest] }));
+        setState((prev) => ({
+          ...prev,
+          guests: prev.guests.some((g) => g.id === guest.id)
+            ? prev.guests
+            : [...prev.guests, guest],
+        }));
         setActiveCode(guest.code);
         const country = countries.find((c) => c.code === guest.countryCode);
         const slotLabel = dinnerSlots[guest.dinnerSlot].label;
@@ -174,6 +179,8 @@ export function EurovisionRoulette() {
     setPendingName(null);
     setPendingGuest(guest);
     setActiveCode(guest.code);
+    // Add to state immediately so other devices see the new participant via polling
+    setState((prev) => ({ ...prev, guests: [...prev.guests, guest] }));
     setPhase("code_shown");
     saveGuestToRemote(guest).catch(() => undefined);
     return true;
@@ -249,6 +256,11 @@ function handleToggleReveal() {
 
   return (
     <main className={"eurovision-roulette"}>
+      {!hasSupabase && (
+        <div className={"eurovision-roulette__no-db"} role="alert">
+          ⚠️ Supabase non configuré — les inscriptions ne sont pas synchronisées entre appareils. Ajoutez les variables d&apos;environnement en production.
+        </div>
+      )}
       <SectionHero
         participantCount={state.guests.length}
         phase={phase}
