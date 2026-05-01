@@ -1,8 +1,6 @@
-import { MapPin, Music, Users } from "lucide-react";
+import { Music } from "lucide-react";
 import { EurovisionLogo } from "@/components/eurovision-logo/eurovision-logo";
-import { EuropeMap } from "@/components/europe-map/europe-map";
 import { Flag } from "@/components/flag/flag";
-import { countryInfo } from "@/lib/country-info";
 import type { Country, DinnerSlot } from "@/lib/types";
 import { dinnerSlots } from "@/lib/data";
 import { youtubeEmbedUrl } from "@/lib/youtube";
@@ -32,7 +30,6 @@ export function PanelResult({ country, slot, guestName }: PanelResultProps) {
   }
 
   const slotLabel = dinnerSlots[slot].label;
-  const info = countryInfo[country.code] ?? null;
   return (
     <section className={"panel-result"} aria-label="Résultat du tirage">
       <header className={"panel-result__header"}>
@@ -74,24 +71,6 @@ export function PanelResult({ country, slot, guestName }: PanelResultProps) {
           </div>
         </div>
       </div>
-      {info && (
-        <div className={"panel-result__geo"}>
-          <div className={"panel-result__geo-details"}>
-            <div className={"panel-result__geo-item"}>
-              <MapPin size={14} aria-hidden="true" />
-              <span className={"panel-result__geo-label"}>Capitale</span>
-              <strong className={"panel-result__geo-value"}>{info.capital}</strong>
-            </div>
-            <div className={"panel-result__geo-item"}>
-              <Users size={14} aria-hidden="true" />
-              <span className={"panel-result__geo-label"}>Population</span>
-              <strong className={"panel-result__geo-value"}>{info.population}</strong>
-            </div>
-          </div>
-          <EuropeMap highlightCode={country.code} />
-        </div>
-      )}
-
       <div className={"panel-result__media"}>
         <div className={"panel-result__song-block"}>
           <span className={"panel-result__song-eyebrow"}>
