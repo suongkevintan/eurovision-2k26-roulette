@@ -10,7 +10,7 @@ import { SectionLogsBottom } from "@/components/section-logs-bottom/section-logs
 import { countries, dinnerSlots } from "@/lib/data";
 import { createGuest, makeCode, pickCountry, pickDinnerSlot } from "@/lib/roulette";
 import { generateSpinTicks, prefersReducedMotion } from "@/lib/spinning";
-import { loadState, persistState, saveGuestToRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
+import { loadState, persistLocalState, saveGuestToRemote, updateGuestInRemote, deleteGuestFromRemote, clearAllGuestsFromRemote } from "@/lib/storage";
 import type { DinnerSlot, Guest, RouletteState } from "@/lib/types";
 
 type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
@@ -71,10 +71,10 @@ export function EurovisionRoulette() {
   }, []);
 
   useEffect(() => {
-    // Skip the very first effect run (before the remote load lands) to avoid
-    // overwriting Supabase/localStorage with the empty bootstrap state.
+    // Persist only to localStorage (offline cache + revealDraws UI preference).
+    // All Supabase writes are handled explicitly per mutation.
     if (!hasLoaded.current) return;
-    persistState(state).catch(() => undefined);
+    persistLocalState(state);
   }, [state]);
 
   useEffect(() => {
@@ -220,6 +220,7 @@ function handleToggleReveal() {
         dinnerSlot: pickDinnerSlot(others, prev.guests.length),
         countryCode: pickCountry(others)
       };
+      updateGuestInRemote(next).catch(() => undefined);
       return {
         ...prev,
         guests: prev.guests.map((g) => (g.id === guest.id ? next : g))
