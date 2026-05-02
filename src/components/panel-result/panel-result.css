@@ -209,7 +209,8 @@
 
 .panel-result__command-kicker,
 .panel-result__command-title,
-.panel-result__command-line {
+.panel-result__command-line > span,
+.panel-result__command-line > strong {
   opacity: 0;
   clip-path: inset(0 100% 0 0);
   animation: panel-result-ticket-ink-in 360ms steps(5, end) both;
@@ -223,15 +224,18 @@
   animation-delay: 1180ms;
 }
 
-.panel-result__command-line:nth-child(1) {
+.panel-result__command-line:nth-child(1) > span,
+.panel-result__command-line:nth-child(1) > strong {
   animation-delay: 1700ms;
 }
 
-.panel-result__command-line:nth-child(2) {
+.panel-result__command-line:nth-child(2) > span,
+.panel-result__command-line:nth-child(2) > strong {
   animation-delay: 2100ms;
 }
 
-.panel-result__command-line:nth-child(3) {
+.panel-result__command-line:nth-child(3) > span,
+.panel-result__command-line:nth-child(3) > strong {
   animation-delay: 2500ms;
 }
 
@@ -414,7 +418,8 @@
 
   .panel-result__command-kicker,
   .panel-result__command-title,
-  .panel-result__command-line,
+  .panel-result__command-line > span,
+  .panel-result__command-line > strong,
   .panel-result__command-stamp {
     opacity: 1;
     clip-path: none;
