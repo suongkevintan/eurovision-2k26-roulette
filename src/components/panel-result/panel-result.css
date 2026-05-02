@@ -209,11 +209,15 @@
 
 .panel-result__command-kicker,
 .panel-result__command-title,
-.panel-result__command-line > span,
-.panel-result__command-line > strong {
+.panel-result__command-line > span {
   opacity: 0;
   clip-path: inset(0 100% 0 0);
   animation: panel-result-ticket-ink-in 360ms steps(5, end) both;
+}
+
+.panel-result__command-line > strong {
+  opacity: 0;
+  animation: panel-result-ticket-value-in 280ms ease-out both;
 }
 
 .panel-result__command-kicker {
@@ -419,10 +423,14 @@
   .panel-result__command-kicker,
   .panel-result__command-title,
   .panel-result__command-line > span,
-  .panel-result__command-line > strong,
   .panel-result__command-stamp {
     opacity: 1;
     clip-path: none;
+    animation: none;
+  }
+
+  .panel-result__command-line > strong {
+    opacity: 1;
     animation: none;
   }
 
@@ -515,6 +523,16 @@
   to {
     opacity: 1;
     clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes panel-result-ticket-value-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
