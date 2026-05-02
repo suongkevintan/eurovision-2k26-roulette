@@ -29,6 +29,19 @@ type ScrambleGlyph = {
   scrambled: boolean;
 };
 
+function formatRetrieveCode(value: string): string {
+  let letters = "";
+  let digits = "";
+  for (const char of value.toUpperCase()) {
+    if (letters.length < 3 && /[A-Z]/.test(char)) {
+      letters += char;
+    } else if (letters.length === 3 && digits.length < 4 && /[0-9]/.test(char)) {
+      digits += char;
+    }
+  }
+  return digits.length > 0 ? `${letters}-${digits}` : letters;
+}
+
 function makeFinalGlyphs(text: string): ScrambleGlyph[] {
   return Array.from(text, (value) => ({ value, scrambled: false }));
 }
@@ -364,12 +377,13 @@ export function SectionHero({
                   id={inputId}
                   type="text"
                   autoComplete={isRetrieveMode ? "off" : "given-name"}
-                  placeholder={isRetrieveMode ? "--- --- ---" : "John Doe"}
+                  placeholder={isRetrieveMode ? "ABC-1234" : "John Doe"}
+                  maxLength={isRetrieveMode ? 8 : undefined}
                   className={`section-hero__input${isRetrieveMode ? " section-hero__input--mono" : ""}`}
                   value={isRetrieveMode ? retrieveCode : name}
                   onChange={(e) => {
                     if (isRetrieveMode) {
-                      setRetrieveCode(e.target.value);
+                      setRetrieveCode(formatRetrieveCode(e.target.value));
                       if (retrieveError) setRetrieveError("");
                     } else {
                       setName(e.target.value);
