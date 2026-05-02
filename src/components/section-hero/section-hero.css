@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: 100lvh;
   background:
     linear-gradient(145deg, #0e2689 0%, #06175d 46%, #020719 100%);
   overflow: hidden;
