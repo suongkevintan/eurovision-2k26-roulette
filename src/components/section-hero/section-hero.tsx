@@ -116,6 +116,21 @@ export function SectionHero({
   const codeCopyTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    function onFocusOut() {
+      setTimeout(() => {
+        const el = document.activeElement;
+        if (!el || el === document.body) {
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+    }
+    section.addEventListener("focusout", onFocusOut);
+    return () => section.removeEventListener("focusout", onFocusOut);
+  }, []);
+
+  useEffect(() => {
     if (adminRevealed) return;
 
     const ADMIN_SEQUENCE = "azerty";
