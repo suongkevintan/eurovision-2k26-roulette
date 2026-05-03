@@ -21,7 +21,7 @@
 }
 
 @media (max-width: 48rem) {
-  .eurovision-roulette[data-phase="revealed"] .section-leaderboard {
+  .eurovision-roulette[data-hide-leaderboard] .section-leaderboard {
     display: none;
   }
 }

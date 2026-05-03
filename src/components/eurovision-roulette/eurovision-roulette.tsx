@@ -36,6 +36,7 @@ export function EurovisionRoulette() {
   const [spinningCountryCode, setSpinningCountryCode] = useState<string | null>(null);
   const [spinningSlot, setSpinningSlot] = useState<DinnerSlot | null>(null);
   const [liveMessage, setLiveMessage] = useState("");
+  const [leaderboardHidden, setLeaderboardHidden] = useState(false);
   const timeouts = useRef<number[]>([]);
   // Gate: don't persist until the first remote load has completed — avoids
   // overwriting localStorage with the empty initial state before Supabase replies.
@@ -98,6 +99,10 @@ export function EurovisionRoulette() {
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const id = window.setTimeout(() => setLeaderboardHidden(true), 1000);
+      timeouts.current.push(id);
+    } else {
+      setLeaderboardHidden(false);
     }
   }, [phase]);
 
@@ -255,7 +260,7 @@ function handleToggleReveal() {
   }
 
   return (
-    <main className={"eurovision-roulette"} data-phase={phase}>
+    <main className={"eurovision-roulette"} data-phase={phase} {...(leaderboardHidden ? { "data-hide-leaderboard": "" } : {})}>
       <SectionHero
         participantCount={state.guests.length}
         phase={phase}
