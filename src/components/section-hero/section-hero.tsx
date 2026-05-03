@@ -384,7 +384,7 @@ export function SectionHero({
       id={inputId}
       type="text"
       autoComplete={isRetrieveMode ? "off" : "given-name"}
-      placeholder={isRetrieveMode ? "ABC-1234" : "John Doe"}
+      placeholder={isRetrieveMode ? "ABC-1234" : "Jean-Christophe Beaux"}
       maxLength={isRetrieveMode ? 8 : undefined}
       className={`section-hero__input${isRetrieveMode ? " section-hero__input--mono" : ""}`}
       value={isRetrieveMode ? retrieveCode : name}
