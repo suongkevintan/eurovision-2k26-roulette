@@ -96,7 +96,14 @@ export function EurovisionRoulette() {
   }, [phase]);
 
   useEffect(() => {
-    if (phase === "spinning") requestAnimationFrame(scrollIntoLeaderboard);
+    if (phase === "spinning") {
+      // Double-RAF: ensures the body overflow change (applied in the
+      // concurrent effect) is fully processed before scrolling.
+      let rafId = requestAnimationFrame(() => {
+        rafId = requestAnimationFrame(scrollIntoLeaderboard);
+      });
+      return () => cancelAnimationFrame(rafId);
+    }
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -174,7 +181,6 @@ export function EurovisionRoulette() {
         const slotLabel = dinnerSlots[guest.dinnerSlot].label;
         setLiveMessage(`Résultat : ${country?.name ?? "?"}, ${slotLabel.toLowerCase()}.`);
         setPhase("revealed");
-        scrollIntoLeaderboard();
       }, totalMs);
       timeouts.current.push(completeId);
     },

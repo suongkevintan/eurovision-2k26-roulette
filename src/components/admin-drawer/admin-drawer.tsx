@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Clipboard, Eye, EyeOff, RefreshCw, Shuffle, Sparkles, Trash2, Trash, X } from "lucide-react";
 import { CtaButton } from "@/components/cta-button/cta-button";
-import { countries } from "@/lib/data";
+import { countries, dinnerSlots } from "@/lib/data";
 import type { Guest } from "@/lib/types";
 
 const ADMIN_PIN = "1974";
@@ -233,7 +233,7 @@ export function AdminDrawer({
                       <span>{guest.code}</span>
                       <span className={revealDraws ? "" : "admin-drawer__row-draw--masked"}>
                         <ScrambledDraw
-                          text={`${country?.name ?? "?"} · ${guest.dinnerSlot}`}
+                          text={`${country?.name ?? "?"} · ${dinnerSlots[guest.dinnerSlot]?.label ?? guest.dinnerSlot}`}
                           revealed={revealDraws}
                         />
                       </span>
