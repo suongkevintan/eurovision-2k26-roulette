@@ -14,6 +14,11 @@
 }
 
 
+.eurovision-roulette[data-phase="revealed"] .section-hero::before,
+.eurovision-roulette[data-phase="revealed"] .section-leaderboard::before {
+  opacity: 0;
+}
+
 .eurovision-roulette__live {
   position: absolute;
   width: 1px;

@@ -16,7 +16,8 @@
   left: 0;
   right: 0;
   height: 6rem;
-  background: linear-gradient(to bottom, #020719, transparent);
+  background: linear-gradient(to bottom, #000, transparent);
+  transition: opacity 400ms ease;
   pointer-events: none;
 }
 

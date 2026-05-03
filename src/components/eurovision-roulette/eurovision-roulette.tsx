@@ -255,7 +255,7 @@ function handleToggleReveal() {
   }
 
   return (
-    <main className={"eurovision-roulette"}>
+    <main className={"eurovision-roulette"} data-phase={phase}>
       <SectionHero
         participantCount={state.guests.length}
         phase={phase}
