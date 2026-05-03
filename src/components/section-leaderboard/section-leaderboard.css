@@ -9,16 +9,26 @@
   background-color: #050d32;
 }
 
-.section-leaderboard::before {
+.section-leaderboard::before,
+.section-leaderboard::after {
   content: "";
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
-  height: 6rem;
-  background: linear-gradient(to bottom, #000, transparent);
-  transition: opacity 400ms ease;
+  height: 8rem;
   pointer-events: none;
+  transition: opacity 400ms ease;
+  z-index: 1;
+}
+
+.section-leaderboard::before {
+  top: 0;
+  background: linear-gradient(to bottom, #000, transparent);
+}
+
+.section-leaderboard::after {
+  bottom: 0;
+  background: linear-gradient(to top, #000, transparent);
 }
 
 @media (max-width: 48rem) {

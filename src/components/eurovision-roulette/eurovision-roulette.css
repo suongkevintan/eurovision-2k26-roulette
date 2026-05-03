@@ -15,7 +15,8 @@
 
 
 .eurovision-roulette[data-phase="revealed"] .section-hero::before,
-.eurovision-roulette[data-phase="revealed"] .section-leaderboard::before {
+.eurovision-roulette[data-phase="revealed"] .section-leaderboard::before,
+.eurovision-roulette[data-phase="revealed"] .section-leaderboard::after {
   opacity: 0;
 }
 
