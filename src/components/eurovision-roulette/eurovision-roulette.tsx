@@ -87,17 +87,12 @@ export function EurovisionRoulette() {
   useEffect(() => {
     const locked = phase === "idle" || phase === "pin_entry" || phase === "code_shown";
     document.body.style.overflow = locked ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [phase]);
 
-  useEffect(() => {
     if (phase === "spinning") {
-      // setTimeout(0) fires after style recalculation, giving the browser
-      // time to re-enable viewport scrolling after body overflow is cleared.
-      const id = window.setTimeout(scrollIntoLeaderboard, 0);
-      return () => window.clearTimeout(id);
-    }
-    if (phase === "revealed") {
+      // scrollIntoView forces a synchronous reflow, which processes the
+      // overflow change above before performing the scroll — no RAF/timeout needed.
+      scrollIntoLeaderboard();
+    } else if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       const id = window.setTimeout(() => {
@@ -115,6 +110,8 @@ export function EurovisionRoulette() {
     } else {
       setLeaderboardHidden(false);
     }
+
+    return () => { document.body.style.overflow = ""; };
   }, [phase]);
 
   const isAdmin = adminUnlocked;
