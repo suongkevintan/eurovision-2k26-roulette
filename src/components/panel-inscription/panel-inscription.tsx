@@ -36,7 +36,7 @@ export function PanelInscription({ code, disabled, onSubmit }: PanelInscriptionP
             id="inscription-name"
             type="text"
             autoComplete="given-name"
-            placeholder="John Doe"
+            placeholder="Jean-Christophe Beaux"
             className={"panel-inscription__input"}
             value={name}
             onChange={(event) => setName(event.target.value)}
