@@ -30,6 +30,10 @@ body {
   padding: 0;
 }
 
+html {
+  background-color: #000;
+}
+
 body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-on-dark);
