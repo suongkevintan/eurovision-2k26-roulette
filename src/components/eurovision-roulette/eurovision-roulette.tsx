@@ -88,11 +88,7 @@ export function EurovisionRoulette() {
     const locked = phase === "idle" || phase === "pin_entry" || phase === "code_shown";
     document.body.style.overflow = locked ? "hidden" : "";
 
-    if (phase === "spinning") {
-      // scrollIntoView forces a synchronous reflow, which processes the
-      // overflow change above before performing the scroll — no RAF/timeout needed.
-      scrollIntoLeaderboard();
-    } else if (phase === "revealed") {
+    if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       const id = window.setTimeout(() => {
@@ -107,7 +103,7 @@ export function EurovisionRoulette() {
         }
       }, 1000);
       timeouts.current.push(id);
-    } else {
+    } else if (locked) {
       setLeaderboardHidden(false);
     }
 
@@ -207,6 +203,12 @@ export function EurovisionRoulette() {
     if (!pendingGuest || phase !== "code_shown") return;
     const guest = pendingGuest;
     setPendingGuest(null);
+    // Clear overflow in the user-gesture stack (before React re-renders),
+    // force a synchronous reflow so the viewport becomes scrollable,
+    // then scroll — all before startSpin batches its state updates.
+    document.body.style.overflow = "";
+    void document.body.offsetHeight;
+    scrollIntoLeaderboard();
     startSpin(guest);
   }
 
