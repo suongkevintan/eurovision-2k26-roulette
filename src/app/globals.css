@@ -31,6 +31,10 @@ body {
   background-color: #000;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   color: var(--color-text-on-dark);
   font-family: var(--font-family-sans);

@@ -233,9 +233,11 @@ export function AdminDrawer({
                       <span>{guest.code}</span>
                       <span className={revealDraws ? "" : "admin-drawer__row-draw--masked"}>
                         <ScrambledDraw
-                          text={`${country?.name ?? "?"} · ${dinnerSlots[guest.dinnerSlot]?.label ?? guest.dinnerSlot}`}
+                          text={country?.name ?? "?"}
                           revealed={revealDraws}
                         />
+                        {" · "}
+                        {dinnerSlots[guest.dinnerSlot]?.label ?? guest.dinnerSlot}
                       </span>
                     </div>
                     <button

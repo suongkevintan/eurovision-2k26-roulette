@@ -18,12 +18,7 @@ type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 function scrollIntoLeaderboard() {
-  const leaderboard = document.getElementById("section-leaderboard");
-  if (!leaderboard) return;
-  const rect = leaderboard.getBoundingClientRect();
-  const absoluteTop = rect.top + window.scrollY;
-  const target = absoluteTop - (window.innerHeight - rect.height) / 2;
-  window.scrollTo({ top: Math.max(target, 0), behavior: "smooth" });
+  document.getElementById("section-leaderboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 export function EurovisionRoulette() {
@@ -97,12 +92,10 @@ export function EurovisionRoulette() {
 
   useEffect(() => {
     if (phase === "spinning") {
-      // Double-RAF: ensures the body overflow change (applied in the
-      // concurrent effect) is fully processed before scrolling.
-      let rafId = requestAnimationFrame(() => {
-        rafId = requestAnimationFrame(scrollIntoLeaderboard);
-      });
-      return () => cancelAnimationFrame(rafId);
+      // setTimeout(0) fires after style recalculation, giving the browser
+      // time to re-enable viewport scrolling after body overflow is cleared.
+      const id = window.setTimeout(scrollIntoLeaderboard, 0);
+      return () => window.clearTimeout(id);
     }
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
