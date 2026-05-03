@@ -135,7 +135,11 @@ export function SectionHero({
     if (!section) return;
     function onFocusOut() {
       setTimeout(() => {
-        if (phaseRef.current === "revealed") return;
+        const p = phaseRef.current;
+        // Only force-scroll to top during the locked registration phases.
+        // During spinning we're scrolling to the leaderboard; during revealed
+        // we're scrolling to the results — both must not be overridden here.
+        if (p !== "idle" && p !== "pin_entry" && p !== "code_shown") return;
         const el = document.activeElement;
         if (!el || el === document.body) {
           window.scrollTo(0, 0);
