@@ -102,10 +102,11 @@ export function EurovisionRoulette() {
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       const id = window.setTimeout(() => {
         if (window.matchMedia("(max-width: 48rem)").matches) {
-          const el = document.getElementById("section-leaderboard");
-          const h = el?.offsetHeight ?? 0;
+          const anchor = document.getElementById("section-logs-bottom");
+          const before = anchor?.getBoundingClientRect().top ?? 0;
           flushSync(() => setLeaderboardHidden(true));
-          window.scrollBy({ top: -h, behavior: "instant" });
+          const after = anchor?.getBoundingClientRect().top ?? 0;
+          window.scrollBy({ top: after - before, behavior: "instant" });
         } else {
           setLeaderboardHidden(true);
         }
