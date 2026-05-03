@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Clipboard, Eye, EyeOff, RefreshCw, Sparkles, Trash2, Trash, X } from "lucide-react";
+import { Clipboard, Eye, EyeOff, RefreshCw, Shuffle, Sparkles, Trash2, Trash, X } from "lucide-react";
 import { CtaButton } from "@/components/cta-button/cta-button";
 import { countries } from "@/lib/data";
 import type { Guest } from "@/lib/types";
@@ -78,6 +78,7 @@ type AdminDrawerProps = {
   onToggleReveal: () => void;
   onCopyCodes: () => void;
   onReroll: (guest: Guest) => void;
+  onRerollSlot: (guest: Guest) => void;
   onRemove: (guest: Guest) => void;
   onClearAll: () => void;
 };
@@ -91,6 +92,7 @@ export function AdminDrawer({
   onToggleReveal,
   onCopyCodes,
   onReroll,
+  onRerollSlot,
   onRemove,
   onClearAll
 }: AdminDrawerProps) {
@@ -239,8 +241,18 @@ export function AdminDrawer({
                     <button
                       type="button"
                       className={"admin-drawer__row-action"}
+                      onClick={() => onRerollSlot(guest)}
+                      aria-label={`Réajuster le moment de ${guest.name}`}
+                      title="Changer le moment (pays conservé)"
+                    >
+                      <Shuffle size={16} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className={"admin-drawer__row-action"}
                       onClick={() => onReroll(guest)}
-                      aria-label={`Reroll ${guest.name}`}
+                      aria-label={`Retirer complètement ${guest.name}`}
+                      title="Reroll complet (pays + moment)"
                     >
                       <RefreshCw size={16} aria-hidden="true" />
                     </button>

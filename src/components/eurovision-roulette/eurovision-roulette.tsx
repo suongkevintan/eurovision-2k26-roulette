@@ -96,7 +96,7 @@ export function EurovisionRoulette() {
   }, [phase]);
 
   useEffect(() => {
-    if (phase === "spinning") scrollIntoLeaderboard();
+    if (phase === "spinning") requestAnimationFrame(scrollIntoLeaderboard);
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -244,10 +244,19 @@ function handleToggleReveal() {
         countryCode: pickCountry(others)
       };
       updateGuestInRemote(next).catch(() => undefined);
-      return {
-        ...prev,
-        guests: prev.guests.map((g) => (g.id === guest.id ? next : g))
+      return { ...prev, guests: prev.guests.map((g) => (g.id === guest.id ? next : g)) };
+    });
+  }
+
+  function handleRerollSlot(guest: Guest) {
+    setState((prev) => {
+      const others = prev.guests.filter((g) => g.id !== guest.id);
+      const next: Guest = {
+        ...guest,
+        dinnerSlot: pickDinnerSlot(others, prev.guests.length, guest.dinnerSlot),
       };
+      updateGuestInRemote(next).catch(() => undefined);
+      return { ...prev, guests: prev.guests.map((g) => (g.id === guest.id ? next : g)) };
     });
   }
 
@@ -325,6 +334,7 @@ function handleToggleReveal() {
         onCopyCodes={handleCopyCodes}
         onClearAll={handleClearAll}
         onReroll={handleReroll}
+        onRerollSlot={handleRerollSlot}
         onRemove={handleRemove}
       />
     </main>

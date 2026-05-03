@@ -242,7 +242,7 @@ export function SectionHero({
       }
       const success = onPinSubmit(pin);
       if (!success) {
-        setPinError("Ce code est déjà utilisé. Choisissez un autre PIN.");
+        setPinError("Cette combinaison prénom + PIN est déjà prise. Essayez un autre PIN.");
         return;
       }
       setPin("");

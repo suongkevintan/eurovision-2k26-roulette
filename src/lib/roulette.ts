@@ -17,29 +17,22 @@ export function makeCode(name: string, pin: string) {
 export function expectedDistribution(total: number): Record<DinnerSlot, number> {
   const base = { apero: 0, entree: 0, plat: 0, dessert: 0, snacks: 0 };
   if (total <= 0) return base;
-  const weights: Record<DinnerSlot, number> = { apero: 2, entree: 2, plat: 3, dessert: 1, snacks: 1 };
-  let allocated = 0;
-  for (const slot of slotOrder) {
-    base[slot] = Math.floor((total * weights[slot]) / 9);
-    allocated += base[slot];
-  }
-  const priority: DinnerSlot[] = ["entree", "apero", "plat", "dessert", "snacks"];
-  while (allocated < total) {
-    base[priority[allocated % priority.length]] += 1;
-    allocated += 1;
-  }
+  const perSlot = Math.floor(total / 5);
+  const remainder = total % 5;
+  for (const slot of slotOrder) base[slot] = perSlot;
+  for (let i = 0; i < remainder; i++) base[slotOrder[i]] += 1;
   return base;
 }
 
-export function pickDinnerSlot(guests: Guest[], targetTotal: number): DinnerSlot {
-  const targets = expectedDistribution(Math.max(targetTotal, guests.length + 1));
+// Always picks from the least-assigned slot(s), with random tiebreaking.
+// Produces a natural cycle of 5: each slot appears once before any repeats.
+// Pass `exclude` to guarantee the returned slot differs from the current one.
+export function pickDinnerSlot(guests: Guest[], _targetTotal: number, exclude?: DinnerSlot): DinnerSlot {
   const counts = countBySlot(guests);
-  return [...slotOrder].sort((a, b) => {
-    const remainingA = targets[a] - counts[a];
-    const remainingB = targets[b] - counts[b];
-    if (remainingA !== remainingB) return remainingB - remainingA;
-    return counts[a] - counts[b];
-  })[0];
+  const candidates = slotOrder.filter(s => s !== exclude);
+  const minCount = Math.min(...candidates.map(s => counts[s]));
+  const tied = candidates.filter(s => counts[s] === minCount);
+  return tied[Math.floor(Math.random() * tied.length)];
 }
 
 export function pickCountry(guests: Guest[]) {

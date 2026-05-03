@@ -291,7 +291,7 @@
 
 .admin-drawer__row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-3) var(--space-4);
