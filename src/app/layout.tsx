@@ -20,7 +20,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#ff0000",
+  themeColor: "#182c84",
 };
 
 export const metadata: Metadata = {
@@ -43,9 +43,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
-      <head>
-        <meta name="theme-color" content="#ff0000" />
-      </head>
+
       <body suppressHydrationWarning>
         {children}
         {process.env.NODE_ENV === "development" && <Agentation endpoint="http://localhost:4747" />}
