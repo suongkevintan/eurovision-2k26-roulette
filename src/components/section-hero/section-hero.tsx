@@ -127,12 +127,15 @@ export function SectionHero({
   const [adminRevealed, setAdminRevealed] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
   const codeCopyTimeoutRef = useRef<number | null>(null);
+  const phaseRef = useRef<Phase>(phase);
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
     function onFocusOut() {
       setTimeout(() => {
+        if (phaseRef.current === "revealed") return;
         const el = document.activeElement;
         if (!el || el === document.body) {
           window.scrollTo(0, 0);
