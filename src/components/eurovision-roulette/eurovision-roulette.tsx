@@ -85,7 +85,12 @@ export function EurovisionRoulette() {
   }, []);
 
   useEffect(() => {
-    const locked = phase === "idle" || phase === "pin_entry" || phase === "code_shown";
+    // On mobile, lock body scroll during registration phases — the leaderboard
+    // CSS only hides it visually (opacity:0) so we also need to block scroll.
+    // On desktop, the leaderboard is below the fold; no body lock needed and
+    // locking it prevents the scroll-to-leaderboard from working.
+    const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+    const locked = isMobile && (phase === "idle" || phase === "pin_entry" || phase === "code_shown");
     document.body.style.overflow = locked ? "hidden" : "";
 
     if (phase === "revealed") {
@@ -203,11 +208,7 @@ export function EurovisionRoulette() {
     if (!pendingGuest || phase !== "code_shown") return;
     const guest = pendingGuest;
     setPendingGuest(null);
-    // Clear overflow in the user-gesture stack (before React re-renders),
-    // force a synchronous reflow so the viewport becomes scrollable,
-    // then scroll — all before startSpin batches its state updates.
-    document.body.style.overflow = "";
-    void document.body.offsetHeight;
+    document.body.style.overflow = ""; // Unlock mobile if locked
     scrollIntoLeaderboard();
     startSpin(guest);
   }
