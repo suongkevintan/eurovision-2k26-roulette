@@ -20,6 +20,12 @@
   opacity: 0;
 }
 
+@media (max-width: 48rem) {
+  .eurovision-roulette[data-phase="revealed"] .section-leaderboard {
+    display: none;
+  }
+}
+
 .eurovision-roulette__live {
   position: absolute;
   width: 1px;
