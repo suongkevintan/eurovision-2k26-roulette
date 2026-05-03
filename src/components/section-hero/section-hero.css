@@ -52,11 +52,13 @@
 .section-hero::before {
   content: "";
   position: absolute;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  height: 10rem;
-  background: linear-gradient(to bottom, transparent, #000);
+  background:
+    linear-gradient(to bottom, #000 0%, transparent 10rem),
+    linear-gradient(to top, #000 0%, transparent 10rem);
   pointer-events: none;
   z-index: 1;
   transition: opacity 400ms ease;
