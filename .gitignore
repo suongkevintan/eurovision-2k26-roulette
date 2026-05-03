@@ -10,3 +10,4 @@ coverage
 .vscode
 .idea
 tsconfig.tsbuildinfo
+.claude/worktrees/agent-a7c5ed06c5f62b96a

@@ -37,7 +37,7 @@ export function PanelResult({ country, slot, guestName }: PanelResultProps) {
         <div className={"panel-result__header-text"}>
           <p className={"panel-result__header-title"}>Résultat du tirage au sort</p>
           <p className={"panel-result__header-subtitle"}>
-            Le destin a chanté : voici la combinaison pour vous chef !
+            Le destin a chanté : voici la combinaison pour vous, chef.fe !
           </p>
         </div>
       </header>
@@ -56,15 +56,15 @@ export function PanelResult({ country, slot, guestName }: PanelResultProps) {
             </div>
             <div className={"panel-result__command-lines"}>
               <p className={"panel-result__command-line"}>
-                <span>Chef·fe</span>
+                <span>Chef·fe :</span>
                 <strong>{guestName ?? "Vous"}</strong>
               </p>
               <p className={"panel-result__command-line"}>
-                <span>Moment</span>
+                <span>Moment du dîner :</span>
                 <strong>{slotLabel}</strong>
               </p>
               <p className={"panel-result__command-line"}>
-                <span>Pays</span>
+                <span>Pays selectionné :</span>
                 <strong>{country.name}</strong>
               </p>
             </div>

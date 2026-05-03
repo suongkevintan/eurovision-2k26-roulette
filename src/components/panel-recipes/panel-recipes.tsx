@@ -32,7 +32,7 @@ export function PanelRecipes({ country, slot }: PanelRecipesProps) {
         <div className={"panel-recipes__header-text"}>
           <h2 className={"panel-recipes__title"}>Inspiration de recettes traditionnelles</h2>
           <p className={"panel-recipes__subtitle"}>
-            Trois idées de recettes, par difficulté. Pas d&apos;obligation !
+            Trois idées de recettes locales, de la plus simple à la plus ambitieuse.
           </p>
         </div>
       </header>
