@@ -18,7 +18,12 @@ type Phase = "idle" | "pin_entry" | "code_shown" | "spinning" | "revealed";
 const SLOT_ORDER: DinnerSlot[] = ["apero", "entree", "plat", "dessert", "snacks"];
 
 function scrollIntoLeaderboard() {
-  document.getElementById("section-leaderboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const leaderboard = document.getElementById("section-leaderboard");
+  if (!leaderboard) return;
+  const rect = leaderboard.getBoundingClientRect();
+  const absoluteTop = rect.top + window.scrollY;
+  const target = absoluteTop - (window.innerHeight - rect.height) / 2;
+  window.scrollTo({ top: Math.max(target, 0), behavior: "smooth" });
 }
 
 export function EurovisionRoulette() {
@@ -85,14 +90,13 @@ export function EurovisionRoulette() {
   }, []);
 
   useEffect(() => {
-    // On mobile, lock body scroll during registration phases — the leaderboard
-    // CSS only hides it visually (opacity:0) so we also need to block scroll.
-    // On desktop, the leaderboard is below the fold; no body lock needed and
-    // locking it prevents the scroll-to-leaderboard from working.
-    const isMobile = window.matchMedia("(max-width: 48rem)").matches;
-    const locked = isMobile && (phase === "idle" || phase === "pin_entry" || phase === "code_shown");
+    const locked = phase === "idle" || phase === "pin_entry" || phase === "code_shown";
     document.body.style.overflow = locked ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [phase]);
 
+  useEffect(() => {
+    if (phase === "spinning") requestAnimationFrame(scrollIntoLeaderboard);
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -108,11 +112,9 @@ export function EurovisionRoulette() {
         }
       }, 1000);
       timeouts.current.push(id);
-    } else if (locked) {
+    } else {
       setLeaderboardHidden(false);
     }
-
-    return () => { document.body.style.overflow = ""; };
   }, [phase]);
 
   const isAdmin = adminUnlocked;
@@ -208,8 +210,6 @@ export function EurovisionRoulette() {
     if (!pendingGuest || phase !== "code_shown") return;
     const guest = pendingGuest;
     setPendingGuest(null);
-    document.body.style.overflow = ""; // Unlock mobile if locked
-    scrollIntoLeaderboard();
     startSpin(guest);
   }
 
