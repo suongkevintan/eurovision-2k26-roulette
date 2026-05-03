@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { AdminDrawer } from "@/components/admin-drawer/admin-drawer";
 import { PanelRecipes } from "@/components/panel-recipes/panel-recipes";
 import { PanelResult } from "@/components/panel-result/panel-result";
@@ -99,7 +100,16 @@ export function EurovisionRoulette() {
     if (phase === "revealed") {
       const el = document.getElementById("section-logs-bottom");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      const id = window.setTimeout(() => setLeaderboardHidden(true), 1000);
+      const id = window.setTimeout(() => {
+        if (window.matchMedia("(max-width: 48rem)").matches) {
+          const el = document.getElementById("section-leaderboard");
+          const h = el?.offsetHeight ?? 0;
+          flushSync(() => setLeaderboardHidden(true));
+          window.scrollBy({ top: -h, behavior: "instant" });
+        } else {
+          setLeaderboardHidden(true);
+        }
+      }, 1000);
       timeouts.current.push(id);
     } else {
       setLeaderboardHidden(false);
